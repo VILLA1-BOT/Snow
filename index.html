@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Villa Bravado Attendance</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#111;
+color:white;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:40px;
+color:#d4af37;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
+}
+
+.card{
+background:#1c1c1c;
+padding:25px;
+border-radius:10px;
+border:1px solid #d4af37;
+}
+
+.card h2{
+margin-top:0;
+color:#d4af37;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #333;
+}
+
+button{
+margin-top:15px;
+padding:12px;
+width:100%;
+border:none;
+background:#d4af37;
+color:black;
+font-weight:bold;
+cursor:pointer;
+border-radius:6px;
+}
+
+button:hover{
+background:#e6c75f;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Villa Bravado Attendance System</h1>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Corridor Meeting</h2>
+
+<table>
+
+<tr>
+<td>Purpose</td>
+<td>Corridor level attendance</td>
+</tr>
+
+<tr>
+<td>Residents</td>
+<td>Only corridor members</td>
+</tr>
+
+<tr>
+<td>Meeting Type</td>
+<td>Small meeting</td>
+</tr>
+
+</table>
+
+<button onclick="openCorridor()">Open Corridor Attendance</button>
+
+</div>
+
+
+<div class="card">
+
+<h2>House Meeting</h2>
+
+<table>
+
+<tr>
+<td>Purpose</td>
+<td>Full residence meeting</td>
+</tr>
+
+<tr>
+<td>Residents</td>
+<td>All Villa Bravado members</td>
+</tr>
+
+<tr>
+<td>Meeting Type</td>
+<td>General meeting</td>
+</tr>
+
+</table>
+
+<button onclick="openHouse()">Open House Attendance</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function openCorridor(){
+
+window.location.href="corridor.html"
+
+}
+
+function openHouse(){
+
+window.location.href="house.html"
+
+}
+
+</script>
+
+</body>
+</html>
