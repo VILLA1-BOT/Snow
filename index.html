@@ -1,160 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Villa Bravado Attendance</title>
-
 <style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    margin: 0;
+    padding: 40px;
+  }
 
-body{
-font-family: Arial, sans-serif;
-background:#111;
-color:white;
-margin:0;
-padding:40px;
-}
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
 
-.container{
-max-width:900px;
-margin:auto;
-}
+  h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #d4af37;
+    font-size: 2.2rem;
+  }
 
-h1{
-text-align:center;
-margin-bottom:40px;
-color:#d4af37;
-}
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:30px;
-}
+  .card {
+    background: #1c1c1c;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #d4af37;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
 
-.card{
-background:#1c1c1c;
-padding:25px;
-border-radius:10px;
-border:1px solid #d4af37;
-}
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  }
 
-.card h2{
-margin-top:0;
-color:#d4af37;
-}
+  .card h2 {
+    margin-top: 0;
+    color: #d4af37;
+    font-size: 1.5rem;
+  }
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
 
-td{
-padding:10px;
-border-bottom:1px solid #333;
-}
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+  }
 
-button{
-margin-top:15px;
-padding:12px;
-width:100%;
-border:none;
-background:#d4af37;
-color:black;
-font-weight:bold;
-cursor:pointer;
-border-radius:6px;
-}
+  button {
+    margin-top: 15px;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    background: #d4af37;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
 
-button:hover{
-background:#e6c75f;
-}
+  button:hover {
+    background: #e6c75f;
+  }
 
+  @media (max-width: 600px) {
+    body {
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
 </style>
 </head>
 
 <body>
-
 <div class="container">
+  <h1>Villa Bravado Attendance System</h1>
 
-<h1>Villa Bravado Attendance System</h1>
+  <div class="grid">
 
-<div class="grid">
+    <div class="card">
+      <h2>Corridor Meeting</h2>
+      <table>
+        <tr><td>Purpose</td><td>Corridor level attendance</td></tr>
+        <tr><td>Residents</td><td>Only corridor members</td></tr>
+        <tr><td>Meeting Type</td><td>Small meeting</td></tr>
+      </table>
+      <button onclick="openCorridor()">Open Corridor Attendance</button>
+    </div>
 
-<div class="card">
+    <div class="card">
+      <h2>House Meeting</h2>
+      <table>
+        <tr><td>Purpose</td><td>Full residence meeting</td></tr>
+        <tr><td>Residents</td><td>All Villa Bravado members</td></tr>
+        <tr><td>Meeting Type</td><td>General meeting</td></tr>
+      </table>
+      <button onclick="openHouse()">Open House Attendance</button>
+    </div>
 
-<h2>Corridor Meeting</h2>
-
-<table>
-
-<tr>
-<td>Purpose</td>
-<td>Corridor level attendance</td>
-</tr>
-
-<tr>
-<td>Residents</td>
-<td>Only corridor members</td>
-</tr>
-
-<tr>
-<td>Meeting Type</td>
-<td>Small meeting</td>
-</tr>
-
-</table>
-
-<button onclick="openCorridor()">Open Corridor Attendance</button>
-
+  </div>
 </div>
-
-
-<div class="card">
-
-<h2>House Meeting</h2>
-
-<table>
-
-<tr>
-<td>Purpose</td>
-<td>Full residence meeting</td>
-</tr>
-
-<tr>
-<td>Residents</td>
-<td>All Villa Bravado members</td>
-</tr>
-
-<tr>
-<td>Meeting Type</td>
-<td>General meeting</td>
-</tr>
-
-</table>
-
-<button onclick="openHouse()">Open House Attendance</button>
-
-</div>
-
-</div>
-
-</div>
-
 
 <script>
-
-function openCorridor(){
-
-window.location.href="corridor.html"
-
+function openCorridor() {
+  window.location.href = "corridor.html";
 }
 
-function openHouse(){
-
-window.location.href="house.html"
-
+function openHouse() {
+  window.location.href = "house.html";
 }
-
 </script>
 
 </body>
