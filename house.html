@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Villa Bravado House Meeting</title>
+</head>
+
+<body>
+
+<div class="vb-wrap">
+  <div class="vb-card">
+    <div class="vb-header">
+      <div class="vb-badge">VB</div>
+      <div>
+        <h1>Villa Bravado</h1>
+        <p>House Meeting Attendance Register</p>
+      </div>
+    </div>
+
+    <form class="vb-form" method="POST" action="YOUR_SCRIPT_LINK">
+
+      <fieldset class="vb-fieldset">
+        <legend>Cub or Senior</legend>
+
+        <label class="vb-radio">
+          <input type="radio" name="status" value="Cub" required>
+          <span>Cub</span>
+        </label>
+
+        <label class="vb-radio">
+          <input type="radio" name="status" value="Senior" required>
+          <span>Senior</span>
+        </label>
+
+      </fieldset>
+
+      <label class="vb-label">Full Name</label>
+      <input class="vb-input"
+      type="text"
+      name="full_name"
+      placeholder="e.g., Sphesihle Zisongo"
+      pattern="[A-Za-z ]+"
+      required>
+
+      <label class="vb-label">Room Number</label>
+      <input class="vb-input"
+      type="text"
+      name="room_number"
+      placeholder="e.g., B12"
+      required>
+
+      <label class="vb-label">Student Number</label>
+      <input class="vb-input"
+      type="text"
+      name="student_number"
+      placeholder="2023123456"
+      maxlength="10"
+      minlength="10"
+      pattern="[0-9]{10}"
+      required>
+
+      <label class="vb-label">Meeting PIN</label>
+      <input class="vb-input"
+      type="password"
+      name="meeting_pin"
+      placeholder="Enter meeting PIN"
+      maxlength="6"
+      required>
+
+      <button class="vb-button" type="submit" id="submitBtn" disabled>
+        Submit Attendance
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+<style>
+
+/* your full CSS can stay exactly the same */
+body{
+background:#0c0c0f;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+.vb-card{
+max-width:640px;
+margin:auto;
+padding:25px;
+border:1px solid gold;
+border-radius:12px;
+}
+
+.vb-form{
+display:grid;
+gap:10px;
+}
+
+.vb-input{
+padding:10px;
+}
+
+.vb-button{
+padding:12px;
+background:gold;
+border:none;
+cursor:pointer;
+}
+
+.vb-button:disabled{
+opacity:0.5;
+}
+
+</style>
+
+<script>
+
+const button = document.getElementById("submitBtn");
+
+function checkForm(){
+
+const status = document.querySelector('input[name="status"]:checked');
+const fullName = document.querySelector('[name="full_name"]').value.trim();
+const room = document.querySelector('[name="room_number"]').value.trim();
+const student = document.querySelector('[name="student_number"]').value.trim();
+const pin = document.querySelector('[name="meeting_pin"]').value.trim();
+
+if(status && fullName && room && student.length===10 && pin){
+button.disabled=false;
+}else{
+button.disabled=true;
+}
+
+}
+
+document.querySelectorAll("input").forEach(input=>{
+input.addEventListener("input",checkForm);
+input.addEventListener("change",checkForm);
+});
+
+</script>
+
+</body>
+</html>
