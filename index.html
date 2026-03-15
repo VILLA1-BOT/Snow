@@ -1,106 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Villa Bravado House Meeting</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>Villa Bravado Home</title>
+  <style>
+    body { background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
+    .vb-card { max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
+    .tabs { display:flex; gap:10px; margin-bottom:20px; }
+    .tab-button { padding:10px 20px; cursor:pointer; background:#222; border:none; color:white; border-radius:5px; text-decoration:none; }
+    .tab-button.active { background:gold; color:black; }
+    .vb-tab-content { display:none; }
+    .vb-tab-content.active { display:block; }
+  </style>
 </head>
-
 <body>
 
 <div class="vb-wrap">
   <div class="vb-card">
-    <div class="vb-header">
-      <div class="vb-badge">VB</div>
-      <div>
-        <h1>Villa Bravado</h1>
-        <p>House Meeting Attendance Register</p>
-      </div>
+    <h1>Villa Bravado</h1>
+    <p>Welcome to the home page!</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="homeTab">Home</button>
+      <button class="tab-button" data-tab="houseTab">House Meeting</button>
     </div>
 
-    <form class="vb-form" id="attendanceForm">
+    <!-- Home Tab Content -->
+    <div class="vb-tab-content active" id="homeTab">
+      <p>This is the home page. Here you can see general info and navigate to the house meeting form.</p>
+    </div>
 
-      <fieldset class="vb-fieldset">
-        <legend>Cub or Senior</legend>
-        <label><input type="radio" name="status" value="Cub" required> Cub</label>
-        <label><input type="radio" name="status" value="Senior" required> Senior</label>
-      </fieldset>
+    <!-- House Meeting Tab Content -->
+    <div class="vb-tab-content" id="houseTab">
+      <p>Go to the house meeting attendance form:</p>
+      <a href="house.html" class="tab-button" style="text-decoration:none;">Open House Meeting Form</a>
+    </div>
 
-      <label>Full Name</label>
-      <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required>
-
-      <label>Room Number</label>
-      <input type="text" name="room_number" placeholder="e.g., B12" required>
-
-      <label>Student Number</label>
-      <input type="text" name="student_number" placeholder="2023123456" maxlength="10" minlength="10" required>
-
-      <label>Meeting PIN</label>
-      <input type="password" name="meeting_pin" maxlength="6" required>
-
-      <button type="submit" id="submitBtn" disabled>Submit Attendance</button>
-
-      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none;">Attendance submitted successfully!</p>
-
-    </form>
   </div>
 </div>
 
-<style>
-body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
-.vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
-.vb-form{ display:grid; gap:10px; }
-.vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
-.vb-button:disabled{ opacity:0.5; }
-</style>
-
 <script>
-const button = document.getElementById("submitBtn");
-const successMsg = document.getElementById("successMsg");
-const form = document.getElementById("attendanceForm");
+  // Tab switching logic
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.vb-tab-content');
 
-// Simple check: all fields filled (let browser handle validation)
-function checkForm(){
-  const filled = Array.from(form.elements)
-    .filter(el => el.tagName==='INPUT' || el.tagName==='TEXTAREA')
-    .every(el => el.value.trim() !== '' || el.type==='radio' && form.querySelector('input[name="'+el.name+'"]:checked'));
-  button.disabled = !filled;
-}
-
-Array.from(form.elements).forEach(el=>{
-  if(el.tagName==='INPUT') el.addEventListener('input', checkForm);
-  if(el.type==='radio') el.addEventListener('change', checkForm);
-});
-
-// Supabase
-const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-
-  const dataToInsert = {
-    status: form.status.value,
-    full_name: form.full_name.value.trim(),
-    room_number: form.room_number.value.trim(),
-    student_number: form.student_number.value.trim(),
-    meeting_pin: form.meeting_pin.value.trim()
-  };
-
-  try {
-    const { data, error } = await supabase.from('attendanceMeeting').insert([dataToInsert]);
-    if(error) throw error;
-
-    successMsg.style.display = 'block';
-    form.reset();
-    button.disabled = true;
-    setTimeout(()=>{ successMsg.style.display='none'; }, 3000);
-
-  } catch(err){
-    console.error(err);
-    alert('Error submitting attendance: '+err.message);
-  }
-});
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const tabId = btn.dataset.tab;
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
 </script>
 
 </body>
