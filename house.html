@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Villa Bravado House Meeting</title>
+  <title>Villa Bravado House Meeting</title>
+  <!-- Supabase JS library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
@@ -16,7 +18,7 @@
       </div>
     </div>
 
-    <form class="vb-form" method="POST" action="YOUR_SCRIPT_LINK">
+    <form class="vb-form" id="attendanceForm">
 
       <fieldset class="vb-fieldset">
         <legend>Cub or Senior</legend>
@@ -77,67 +79,100 @@
 
 <style>
 
-/* your full CSS can stay exactly the same */
+/* keep your existing CSS */
 body{
-background:#0c0c0f;
-color:white;
-font-family:Arial;
-padding:20px;
+  background:#0c0c0f;
+  color:white;
+  font-family:Arial;
+  padding:20px;
 }
 
 .vb-card{
-max-width:640px;
-margin:auto;
-padding:25px;
-border:1px solid gold;
-border-radius:12px;
+  max-width:640px;
+  margin:auto;
+  padding:25px;
+  border:1px solid gold;
+  border-radius:12px;
 }
 
 .vb-form{
-display:grid;
-gap:10px;
+  display:grid;
+  gap:10px;
 }
 
 .vb-input{
-padding:10px;
+  padding:10px;
 }
 
 .vb-button{
-padding:12px;
-background:gold;
-border:none;
-cursor:pointer;
+  padding:12px;
+  background:gold;
+  border:none;
+  cursor:pointer;
 }
 
 .vb-button:disabled{
-opacity:0.5;
+  opacity:0.5;
 }
 
 </style>
 
 <script>
 
+// ----------------------
+// Form validation logic
+// ----------------------
 const button = document.getElementById("submitBtn");
 
 function checkForm(){
+  const status = document.querySelector('input[name="status"]:checked');
+  const fullName = document.querySelector('[name="full_name"]').value.trim();
+  const room = document.querySelector('[name="room_number"]').value.trim();
+  const student = document.querySelector('[name="student_number"]').value.trim();
+  const pin = document.querySelector('[name="meeting_pin"]').value.trim();
 
-const status = document.querySelector('input[name="status"]:checked');
-const fullName = document.querySelector('[name="full_name"]').value.trim();
-const room = document.querySelector('[name="room_number"]').value.trim();
-const student = document.querySelector('[name="student_number"]').value.trim();
-const pin = document.querySelector('[name="meeting_pin"]').value.trim();
-
-if(status && fullName && room && student.length===10 && pin){
-button.disabled=false;
-}else{
-button.disabled=true;
-}
-
+  if(status && fullName && room && student.length===10 && pin){
+    button.disabled=false;
+  }else{
+    button.disabled=true;
+  }
 }
 
 document.querySelectorAll("input").forEach(input=>{
-input.addEventListener("input",checkForm);
-input.addEventListener("change",checkForm);
+  input.addEventListener("input",checkForm);
+  input.addEventListener("change",checkForm);
+});
+
+// ----------------------
+// Supabase integration
+// ----------------------
+
+// Replace these with your Supabase project details
+const supabaseUrl = 'https://YOUR_PROJECT_ID.supabase.co';
+const supabaseKey = 'YOUR_ANON_KEY';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+document.getElementById('attendanceForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+
+  const status = document.querySelector('input[name="status"]:checked').value;
+  const full_name = document.querySelector('[name="full_name"]').value.trim();
+  const room_number = document.querySelector('[name="room_number"]').value.trim();
+  const student_number = document.querySelector('[name="student_number"]').value.trim();
+  const meeting_pin = document.querySelector('[name="meeting_pin"]').value.trim();
+
+  // Insert into Supabase table 'attendance'
+  const { data, error } = await supabase
+    .from('attendance')
+    .insert([{ status, full_name, room_number, student_number, meeting_pin }]);
+
+  if(error){
+    alert('Error submitting attendance: ' + error.message);
+  } else {
+    alert('Attendance submitted successfully!');
+    e.target.reset();
+    button.disabled = true;
+  }
 });
 
 </script>
