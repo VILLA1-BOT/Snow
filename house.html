@@ -132,9 +132,15 @@ function checkForm(){
   const student = document.querySelector('[name="student_number"]').value.trim();
   const pin = document.querySelector('[name="meeting_pin"]').value.trim();
 
-  button.disabled = !(status && fullName && room && student.length===10 && pin);
+  // Enable button if all fields are valid and student number is exactly 10 digits
+  if(status && fullName && room && /^\d{10}$/.test(student) && pin){
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
 }
 
+// Listen to changes on all input fields
 document.querySelectorAll("input").forEach(input=>{
   input.addEventListener("input",checkForm);
   input.addEventListener("change",checkForm);
@@ -157,7 +163,7 @@ document.getElementById('attendanceForm').addEventListener('submit', async (e)=>
   const meeting_pin = document.querySelector('[name="meeting_pin"]').value.trim();
 
   const { data, error } = await supabase
-    .from('attendanceMeeting') // <-- updated table name
+    .from('attendanceMeeting') // Correct table name
     .insert([{ status, full_name, room_number, student_number, meeting_pin }]);
 
   if(error){
