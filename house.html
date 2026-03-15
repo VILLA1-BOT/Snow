@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>Villa Bravado House Meeting</title>
-  <!-- Supabase JS library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
@@ -22,160 +21,81 @@
 
       <fieldset class="vb-fieldset">
         <legend>Cub or Senior</legend>
-
-        <label class="vb-radio">
-          <input type="radio" name="status" value="Cub" required>
-          <span>Cub</span>
-        </label>
-
-        <label class="vb-radio">
-          <input type="radio" name="status" value="Senior" required>
-          <span>Senior</span>
-        </label>
-
+        <label><input type="radio" name="status" value="Cub" required> Cub</label>
+        <label><input type="radio" name="status" value="Senior" required> Senior</label>
       </fieldset>
 
-      <label class="vb-label">Full Name</label>
-      <input class="vb-input"
-      type="text"
-      name="full_name"
-      placeholder="e.g., Sphesihle Zisongo"
-      pattern="[A-Za-z ]+"
-      required>
+      <label>Full Name</label>
+      <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required>
 
-      <label class="vb-label">Room Number</label>
-      <input class="vb-input"
-      type="text"
-      name="room_number"
-      placeholder="e.g., B12"
-      required>
+      <label>Room Number</label>
+      <input type="text" name="room_number" placeholder="e.g., B12" required>
 
-      <label class="vb-label">Student Number</label>
-      <input class="vb-input"
-      type="text"
-      name="student_number"
-      placeholder="2023123456"
-      maxlength="10"
-      minlength="10"
-      pattern="[0-9]{10}"
-      required>
+      <label>Student Number</label>
+      <input type="text" name="student_number" placeholder="2023123456" maxlength="10" minlength="10" required>
 
-      <label class="vb-label">Meeting PIN</label>
-      <input class="vb-input"
-      type="password"
-      name="meeting_pin"
-      placeholder="Enter meeting PIN"
-      maxlength="6"
-      required>
+      <label>Meeting PIN</label>
+      <input type="password" name="meeting_pin" maxlength="6" required>
 
-      <button class="vb-button" type="submit" id="submitBtn" disabled>
-        Submit Attendance
-      </button>
+      <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
 
-      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none; margin-top:10px;">
-        Attendance submitted successfully!
-      </p>
+      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none;">Attendance submitted successfully!</p>
 
     </form>
-
   </div>
 </div>
 
 <style>
-body{
-  background:#0c0c0f;
-  color:white;
-  font-family:Arial;
-  padding:20px;
-}
-
-.vb-card{
-  max-width:640px;
-  margin:auto;
-  padding:25px;
-  border:1px solid gold;
-  border-radius:12px;
-}
-
-.vb-form{
-  display:grid;
-  gap:10px;
-}
-
-.vb-input{
-  padding:10px;
-}
-
-.vb-button{
-  padding:12px;
-  background:gold;
-  border:none;
-  cursor:pointer;
-}
-
-.vb-button:disabled{
-  opacity:0.5;
-}
+body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
+.vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
+.vb-form{ display:grid; gap:10px; }
+.vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
+.vb-button:disabled{ opacity:0.5; }
 </style>
 
 <script>
-// ----------------------
-// Form validation
-// ----------------------
 const button = document.getElementById("submitBtn");
 const successMsg = document.getElementById("successMsg");
+const form = document.getElementById("attendanceForm");
 
-function checkForm(){
-  const status = document.querySelector('input[name="status"]:checked');
-  const fullName = document.querySelector('[name="full_name"]').value.trim();
-  const room = document.querySelector('[name="room_number"]').value.trim();
-  const student = document.querySelector('[name="student_number"]').value.trim();
-  const pin = document.querySelector('[name="meeting_pin"]').value.trim();
-
-  // Enable button if all fields are valid and student number is exactly 10 digits
-  if(status && fullName && room && /^\d{10}$/.test(student) && pin){
-    button.disabled = false;
-  } else {
-    button.disabled = true;
-  }
+function checkForm() {
+  button.disabled = !form.checkValidity();
 }
+form.addEventListener("input", checkForm);
+form.addEventListener("change", checkForm);
+checkForm();
 
-// Listen to changes on all input fields
-document.querySelectorAll("input").forEach(input=>{
-  input.addEventListener("input",checkForm);
-  input.addEventListener("change",checkForm);
-});
-
-// ----------------------
-// Supabase integration
-// ----------------------
+// Supabase
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-document.getElementById('attendanceForm').addEventListener('submit', async (e)=>{
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const status = document.querySelector('input[name="status"]:checked').value;
-  const full_name = document.querySelector('[name="full_name"]').value.trim();
-  const room_number = document.querySelector('[name="room_number"]').value.trim();
-  const student_number = document.querySelector('[name="student_number"]').value.trim();
-  const meeting_pin = document.querySelector('[name="meeting_pin"]').value.trim();
+  const dataToInsert = {
+    status: form.status.value,
+    full_name: form.full_name.value.trim(),
+    room_number: form.room_number.value.trim(),
+    student_number: form.student_number.value.trim(),
+    meeting_pin: form.meeting_pin.value.trim()
+  };
 
-  const { data, error } = await supabase
-    .from('attendanceMeeting') // Correct table name
-    .insert([{ status, full_name, room_number, student_number, meeting_pin }]);
+  try {
+    const { error } = await supabaseClient
+      .from('attendanceMeeting')
+      .insert([dataToInsert]);
 
-  if(error){
-    alert('Error submitting attendance: ' + error.message);
-  } else {
-    // Show success message
+    if (error) throw error;
+
     successMsg.style.display = 'block';
-    e.target.reset();
+    form.reset();
     button.disabled = true;
+    setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
 
-    // Hide message after 3 seconds
-    setTimeout(()=>{ successMsg.style.display='none'; }, 3000);
+  } catch (err) {
+    console.error(err);
+    alert('Error submitting attendance: ' + err.message);
   }
 });
 </script>
