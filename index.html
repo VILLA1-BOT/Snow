@@ -17,29 +17,49 @@
       </div>
     </div>
 
-    <form class="vb-form" id="attendanceForm">
+    <form class="vb-form" id="attendanceForm" novalidate>
 
-      <fieldset class="vb-fieldset">
-        <legend>Cub or Senior</legend>
-        <label><input type="radio" name="status" value="Cub" required> Cub</label>
-        <label><input type="radio" name="status" value="Senior" required> Senior</label>
-      </fieldset>
+      <div class="vb-field">
+        <fieldset class="vb-fieldset">
+          <legend>Cub or Senior</legend>
+          <label><input type="radio" name="status" value="Cub" required> Cub</label>
+          <label><input type="radio" name="status" value="Senior" required> Senior</label>
+        </fieldset>
+        <small class="vb-error" id="error-status"></small>
+      </div>
 
-      <label>Full Name</label>
-      <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required>
+      <div class="vb-field">
+        <label>Full Name</label>
+        <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required>
+        <small class="vb-error" id="error-full_name"></small>
+      </div>
 
-      <label>Room Number</label>
-      <input type="text" name="room_number" placeholder="e.g., B12" required>
+      <div class="vb-field">
+        <label>Room Number</label>
+        <input type="text" name="room_number" placeholder="e.g., B12" required>
+        <small class="vb-error" id="error-room_number"></small>
+      </div>
 
-      <label>Student Number</label>
-      <input type="text" name="student_number" placeholder="2023123456" maxlength="10" minlength="10" required>
+      <div class="vb-field">
+        <label>Student Number</label>
+        <input type="text" name="student_number" placeholder="2023123456" maxlength="10" minlength="10" required>
+        <small class="vb-error" id="error-student_number"></small>
+      </div>
 
-      <label>Meeting PIN</label>
-      <input type="password" name="meeting_pin" maxlength="6" required>
+      <div class="vb-field">
+        <label>Meeting PIN</label>
+        <input type="password" name="meeting_pin" maxlength="6" required>
+        <small class="vb-error" id="error-meeting_pin"></small>
+      </div>
 
-      <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
+      <div class="vb-field">
+        <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
+        <small class="vb-error" id="error-form"></small>
+      </div>
 
-      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none;">Attendance submitted successfully!</p>
+      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none;">
+        Attendance submitted successfully!
+      </p>
 
     </form>
   </div>
@@ -48,9 +68,12 @@
 <style>
 body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
 .vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
-.vb-form{ display:grid; gap:10px; }
+.vb-form{ display:grid; gap:12px; }
+.vb-field{ display:flex; flex-direction:column; gap:6px; }
 .vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
-.vb-button:disabled{ opacity:0.5; }
+.vb-button:disabled{ opacity:0.5; cursor:not-allowed; }
+.vb-error{ color:#ff6b6b; font-size:12px; min-height:16px; }
+.vb-error:empty{ display:none; }
 </style>
 
 <script>
@@ -58,12 +81,65 @@ const button = document.getElementById("submitBtn");
 const successMsg = document.getElementById("successMsg");
 const form = document.getElementById("attendanceForm");
 
-function checkForm() {
-  button.disabled = !form.checkValidity();
+const fields = [
+  { name: "status", errorId: "error-status" },
+  { name: "full_name", errorId: "error-full_name" },
+  { name: "room_number", errorId: "error-room_number" },
+  { name: "student_number", errorId: "error-student_number" },
+  { name: "meeting_pin", errorId: "error-meeting_pin" }
+];
+
+function getFieldElement(name) {
+  return form.querySelector(`[name="${name}"]`);
 }
-form.addEventListener("input", checkForm);
-form.addEventListener("change", checkForm);
-checkForm();
+
+function showError(name, message) {
+  const errorEl = document.getElementById(`error-${name}`);
+  if (errorEl) errorEl.textContent = message || "";
+}
+
+function validateField(name) {
+  const el = getFieldElement(name);
+
+  if (!el) return true;
+
+  // Radios need special handling
+  if (el.type === "radio") {
+    const checked = form.querySelector(`input[name="${name}"]:checked`);
+    if (!checked) {
+      showError(name, "Please choose one option.");
+      return false;
+    }
+    showError(name, "");
+    return true;
+  }
+
+  if (!el.checkValidity()) {
+    showError(name, el.validationMessage);
+    return false;
+  }
+
+  showError(name, "");
+  return true;
+}
+
+function validateAll() {
+  const ok = fields.every(f => validateField(f.name));
+  button.disabled = !ok;
+  return ok;
+}
+
+form.addEventListener("input", (e) => {
+  if (e.target.name) validateField(e.target.name);
+  validateAll();
+});
+
+form.addEventListener("change", (e) => {
+  if (e.target.name) validateField(e.target.name);
+  validateAll();
+});
+
+validateAll();
 
 // Supabase
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
@@ -72,6 +148,15 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  document.getElementById("error-form").textContent = "";
+
+  if (!validateAll()) {
+    return;
+  }
+
+  const originalText = button.textContent;
+  button.textContent = "Submitting...";
+  button.disabled = true;
 
   const dataToInsert = {
     status: form.status.value,
@@ -90,12 +175,16 @@ form.addEventListener('submit', async (e) => {
 
     successMsg.style.display = 'block';
     form.reset();
-    button.disabled = true;
+    validateAll();
     setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
 
   } catch (err) {
     console.error(err);
-    alert('Error submitting attendance: ' + err.message);
+    document.getElementById("error-form").textContent =
+      "Error submitting attendance: " + err.message;
+  } finally {
+    button.textContent = originalText;
+    validateAll();
   }
 });
 </script>
