@@ -1,132 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Villa Bravado Attendance</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: white;
-    margin: 0;
-    padding: 40px;
-  }
-
-  .container {
-    max-width: 900px;
-    margin: auto;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    color: #d4af37;
-    font-size: 2.2rem;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
-
-  .card {
-    background: #1c1c1c;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #d4af37;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-  }
-
-  .card h2 {
-    margin-top: 0;
-    color: #d4af37;
-    font-size: 1.5rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-
-  td {
-    padding: 10px;
-    border-bottom: 1px solid #333;
-  }
-
-  button {
-    margin-top: 15px;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    background: #d4af37;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: background 0.2s;
-  }
-
-  button:hover {
-    background: #e6c75f;
-  }
-
-  @media (max-width: 600px) {
-    body {
-      padding: 20px;
-    }
-    h1 {
-      font-size: 1.8rem;
-    }
-  }
-</style>
+  <title>Villa Bravado House Meeting</title>
+  <!-- Supabase JS library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
-<div class="container">
-  <h1>Villa Bravado Attendance System</h1>
 
-  <div class="grid">
-
-    <div class="card">
-      <h2>Corridor Meeting</h2>
-      <table>
-        <tr><td>Purpose</td><td>Corridor level attendance</td></tr>
-        <tr><td>Residents</td><td>Only corridor members</td></tr>
-        <tr><td>Meeting Type</td><td>Small meeting</td></tr>
-      </table>
-      <button onclick="openCorridor()">Open Corridor Attendance</button>
+<div class="vb-wrap">
+  <div class="vb-card">
+    <div class="vb-header">
+      <div class="vb-badge">VB</div>
+      <div>
+        <h1>Villa Bravado</h1>
+        <p>House Meeting Attendance Register</p>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>House Meeting</h2>
-      <table>
-        <tr><td>Purpose</td><td>Full residence meeting</td></tr>
-        <tr><td>Residents</td><td>All Villa Bravado members</td></tr>
-        <tr><td>Meeting Type</td><td>General meeting</td></tr>
-      </table>
-      <button onclick="openHouse()">Open House Attendance</button>
-    </div>
+    <form class="vb-form" id="attendanceForm">
+
+      <fieldset class="vb-fieldset">
+        <legend>Cub or Senior</legend>
+
+        <label class="vb-radio">
+          <input type="radio" name="status" value="Cub" required>
+          <span>Cub</span>
+        </label>
+
+        <label class="vb-radio">
+          <input type="radio" name="status" value="Senior" required>
+          <span>Senior</span>
+        </label>
+
+      </fieldset>
+
+      <label class="vb-label">Full Name</label>
+      <input class="vb-input"
+      type="text"
+      name="full_name"
+      placeholder="e.g., Sphesihle Zisongo"
+      pattern="[A-Za-z ]+"
+      required>
+
+      <label class="vb-label">Room Number</label>
+      <input class="vb-input"
+      type="text"
+      name="room_number"
+      placeholder="e.g., B12"
+      required>
+
+      <label class="vb-label">Student Number</label>
+      <input class="vb-input"
+      type="text"
+      name="student_number"
+      placeholder="2023123456"
+      maxlength="10"
+      minlength="10"
+      pattern="[0-9]{10}"
+      required>
+
+      <label class="vb-label">Meeting PIN</label>
+      <input class="vb-input"
+      type="password"
+      name="meeting_pin"
+      placeholder="Enter meeting PIN"
+      maxlength="6"
+      required>
+
+      <button class="vb-button" type="submit" id="submitBtn" disabled>
+        Submit Attendance
+      </button>
+
+      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none; margin-top:10px;">
+        Attendance submitted successfully!
+      </p>
+
+    </form>
 
   </div>
 </div>
 
-<script>
-function openCorridor() {
-  window.location.href = "corridor.html";
+<style>
+body{
+  background:#0c0c0f;
+  color:white;
+  font-family:Arial;
+  padding:20px;
 }
 
-function openHouse() {
-  window.location.href = "house.html";
+.vb-card{
+  max-width:640px;
+  margin:auto;
+  padding:25px;
+  border:1px solid gold;
+  border-radius:12px;
 }
+
+.vb-form{
+  display:grid;
+  gap:10px;
+}
+
+.vb-input{
+  padding:10px;
+}
+
+.vb-button{
+  padding:12px;
+  background:gold;
+  border:none;
+  cursor:pointer;
+}
+
+.vb-button:disabled{
+  opacity:0.5;
+}
+</style>
+
+<script>
+// ----------------------
+// Form validation
+// ----------------------
+const button = document.getElementById("submitBtn");
+const successMsg = document.getElementById("successMsg");
+
+function checkForm(){
+  const status = document.querySelector('input[name="status"]:checked');
+  const fullName = document.querySelector('[name="full_name"]').value.trim();
+  const room = document.querySelector('[name="room_number"]').value.trim();
+  const student = document.querySelector('[name="student_number"]').value.trim();
+  const pin = document.querySelector('[name="meeting_pin"]').value.trim();
+
+  // Enable button if all fields are valid and student number is exactly 10 digits
+  if(status && fullName && room && /^\d{10}$/.test(student) && pin){
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
+}
+
+// Listen to changes on all input fields
+document.querySelectorAll("input").forEach(input=>{
+  input.addEventListener("input",checkForm);
+  input.addEventListener("change",checkForm);
+});
+
+// ----------------------
+// Supabase integration
+// ----------------------
+const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+document.getElementById('attendanceForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+
+  const status = document.querySelector('input[name="status"]:checked').value;
+  const full_name = document.querySelector('[name="full_name"]').value.trim();
+  const room_number = document.querySelector('[name="room_number"]').value.trim();
+  const student_number = document.querySelector('[name="student_number"]').value.trim();
+  const meeting_pin = document.querySelector('[name="meeting_pin"]').value.trim();
+
+  const { data, error } = await supabase
+    .from('attendanceMeeting') // Correct table name
+    .insert([{ status, full_name, room_number, student_number, meeting_pin }]);
+
+  if(error){
+    alert('Error submitting attendance: ' + error.message);
+  } else {
+    // Show success message
+    successMsg.style.display = 'block';
+    e.target.reset();
+    button.disabled = true;
+
+    // Hide message after 3 seconds
+    setTimeout(()=>{ successMsg.style.display='none'; }, 3000);
+  }
+});
 </script>
 
 </body>
