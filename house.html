@@ -1,177 +1,423 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Villa Bravado House Meeting</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Villa Bravado House Meeting</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Manrope:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
+    <div class="vb-wrap">
+      <div class="vb-card">
+        <div class="vb-topbar">
+          <div class="vb-brand">
+            <div class="vb-badge">VB</div>
+            <div>
+              <h1>Villa Bravado</h1>
+              <p>House Meeting Attendance Register</p>
+            </div>
+          </div>
+          <a class="vb-button vb-button-ghost" href="index.html">Back to Home</a>
+        </div>
 
-<div class="vb-wrap">
-  <div class="vb-card">
-    <div class="vb-header">
-      <div class="vb-badge">VB</div>
-      <div>
-        <h1>Villa Bravado</h1>
-        <p>House Meeting Attendance Register</p>
+        <form class="vb-form" id="attendanceForm" novalidate>
+          <div class="vb-field">
+            <fieldset class="vb-fieldset">
+              <legend>Cub or Senior</legend>
+              <label><input type="radio" name="status" value="Cub" required /> Cub</label>
+              <label><input type="radio" name="status" value="Senior" required /> Senior</label>
+            </fieldset>
+            <small class="vb-error" id="error-status"></small>
+          </div>
+
+          <div class="vb-field">
+            <label>Full Name</label>
+            <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required />
+            <small class="vb-error" id="error-full_name"></small>
+          </div>
+
+          <div class="vb-field">
+            <label>Room Number</label>
+            <input type="text" name="room_number" placeholder="e.g., B12" required />
+            <small class="vb-error" id="error-room_number"></small>
+          </div>
+
+          <div class="vb-field">
+            <label>Student Number</label>
+            <input
+              type="text"
+              name="student_number"
+              placeholder="2023123456"
+              maxlength="10"
+              minlength="10"
+              required
+            />
+            <small class="vb-error" id="error-student_number"></small>
+          </div>
+
+          <div class="vb-field vb-submit-row">
+            <button type="submit" id="submitBtn" class="vb-button" disabled>
+              Submit Attendance
+            </button>
+            <small class="vb-error" id="error-form"></small>
+          </div>
+        </form>
       </div>
     </div>
 
-    <form class="vb-form" id="attendanceForm" novalidate>
-
-      <div class="vb-field">
-        <fieldset class="vb-fieldset">
-          <legend>Cub or Senior</legend>
-          <label><input type="radio" name="status" value="Cub" required> Cub</label>
-          <label><input type="radio" name="status" value="Senior" required> Senior</label>
-        </fieldset>
-        <small class="vb-error" id="error-status"></small>
+    <div id="successModal" class="vb-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="vb-modal-card" role="document">
+        <h2>Aweh Villaman!</h2>
+        <p>Thank you for attending.</p>
+        <a class="vb-button" href="index.html">Back to Homepage</a>
       </div>
+    </div>
 
-      <div class="vb-field">
-        <label>Full Name</label>
-        <input type="text" name="full_name" placeholder="e.g., Sphesihle Zisongo" required>
-        <small class="vb-error" id="error-full_name"></small>
-      </div>
+    <style>
+      :root {
+        --black: #0b0b0e;
+        --gold: #d4af37;
+        --gold-soft: #f6d978;
+        --ink: #f5f1e8;
+        --accent-teal: #37d4b3;
+        --accent-coral: #ff6f61;
+        --accent-sky: #57c7ff;
+      }
 
-      <div class="vb-field">
-        <label>Room Number</label>
-        <input type="text" name="room_number" placeholder="e.g., B12" required>
-        <small class="vb-error" id="error-room_number"></small>
-      </div>
+      * {
+        box-sizing: border-box;
+      }
 
-      <div class="vb-field">
-        <label>Student Number</label>
-        <input type="text" name="student_number" placeholder="2023123456" maxlength="10" minlength="10" required>
-        <small class="vb-error" id="error-student_number"></small>
-      </div>
+      body {
+        margin: 0;
+        font-family: "Manrope", "Segoe UI", sans-serif;
+        background: var(--black);
+        color: var(--ink);
+        min-height: 100vh;
+      }
 
-      <div class="vb-field">
-        <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
-        <small class="vb-error" id="error-form"></small>
-      </div>
+      .vb-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px;
+        background:
+          radial-gradient(circle at 10% 10%, rgba(87, 199, 255, 0.25), transparent 45%),
+          radial-gradient(circle at 85% 15%, rgba(255, 111, 97, 0.25), transparent 40%),
+          radial-gradient(circle at 15% 80%, rgba(55, 212, 179, 0.25), transparent 45%),
+          linear-gradient(145deg, #09090c 20%, #15151b 80%);
+      }
 
-      <p id="successMsg" style="color: lightgreen; font-weight:bold; display:none;">
-        Attendance submitted successfully!
-      </p>
+      .vb-card {
+        width: min(720px, 100%);
+        padding: 28px;
+        border: 1px solid rgba(212, 175, 55, 0.6);
+        border-radius: 16px;
+        background: rgba(12, 12, 16, 0.9);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+      }
 
-    </form>
-  </div>
-</div>
+      .vb-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
 
-<style>
-  body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
-  .vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
-  .vb-form{ display:grid; gap:12px; }
-  .vb-field{ display:flex; flex-direction:column; gap:6px; }
-  .vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
-  .vb-button:disabled{ opacity:0.5; cursor:not-allowed; }
-  .vb-error{ color:#ff6b6b; font-size:12px; min-height:16px; }
-  .vb-error:empty{ display:none; }
-</style>
+      .vb-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
 
-<script>
-const button = document.getElementById("submitBtn");
-const successMsg = document.getElementById("successMsg");
-const form = document.getElementById("attendanceForm");
+      .vb-badge {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        color: #111;
+        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+      }
 
-const fields = [
-  { name: "status", errorId: "error-status" },
-  { name: "full_name", errorId: "error-full_name" },
-  { name: "room_number", errorId: "error-room_number" },
-  { name: "student_number", errorId: "error-student_number" }
-];
+      .vb-brand h1 {
+        font-family: "Cinzel", serif;
+        font-size: clamp(20px, 3.5vw, 28px);
+        margin: 0;
+      }
 
-function getFieldElement(name) {
-  return form.querySelector(`[name="${name}"]`);
-}
+      .vb-brand p {
+        margin: 4px 0 0;
+        color: rgba(245, 241, 232, 0.75);
+        font-size: 13px;
+      }
 
-function showError(name, message) {
-  const errorEl = document.getElementById(`error-${name}`);
-  if (errorEl) errorEl.textContent = message || "";
-}
+      .vb-form {
+        display: grid;
+        gap: 14px;
+      }
 
-function validateField(name) {
-  const el = getFieldElement(name);
-  if (!el) return true;
-  if (el.type === "radio") {
-    const checked = form.querySelector(`input[name="${name}"]:checked`);
-    if (!checked) {
-      showError(name, "Please choose one option.");
-      return false;
-    }
-    showError(name, "");
-    return true;
-  }
-  if (!el.checkValidity()) {
-    showError(name, el.validationMessage);
-    return false;
-  }
-  showError(name, "");
-  return true;
-}
+      .vb-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
 
-function validateAll() {
-  const ok = fields.every(f => validateField(f.name));
-  button.disabled = !ok;
-  return ok;
-}
+      .vb-field label {
+        font-weight: 600;
+        color: rgba(245, 241, 232, 0.9);
+      }
 
-form.addEventListener("input", (e) => {
-  if (e.target.name) validateField(e.target.name);
-  validateAll();
-});
+      .vb-field input[type="text"],
+      .vb-field input[type="password"] {
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--ink);
+        font-size: 15px;
+        outline: none;
+      }
 
-form.addEventListener("change", (e) => {
-  if (e.target.name) validateField(e.target.name);
-  validateAll();
-});
+      .vb-field input:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+      }
 
-validateAll();
+      .vb-fieldset {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
 
-// Supabase
-const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+      .vb-fieldset legend {
+        padding: 0 8px;
+        color: var(--gold-soft);
+        font-weight: 600;
+      }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  document.getElementById("error-form").textContent = "";
-  button.disabled = true;
-  const originalText = button.textContent;
-  button.textContent = "Submitting...";
+      .vb-fieldset label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-  try {
-    const dataToInsert = {
-      status: form.status.value,
-      full_name: form.full_name.value.trim(),
-      room_number: form.room_number.value.trim(),
-      student_number: form.student_number.value.trim()
-    };
+      .vb-submit-row {
+        margin-top: 6px;
+      }
 
-    const { error } = await supabaseClient
-      .from('attendanceMeeting')
-      .insert([dataToInsert]);
+      .vb-button {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+        border: none;
+        color: #111;
+        font-weight: 700;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
 
-    if (error) throw error;
+      .vb-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(212, 175, 55, 0.35);
+      }
 
-    successMsg.style.display = 'block';
-    form.reset();
-    validateAll();
-    setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
+      .vb-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
 
-  } catch (err) {
-    console.error(err);
-    document.getElementById("error-form").textContent =
-      "Error submitting attendance: " + err.message;
-  } finally {
-    button.textContent = originalText;
-    validateAll();
-  }
-});
-</script>
+      .vb-button-ghost {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--ink);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-decoration: none;
+      }
 
-</body>
+      .vb-error {
+        color: #ff6b6b;
+        font-size: 12px;
+        min-height: 16px;
+      }
+
+      .vb-error:empty {
+        display: none;
+      }
+
+      .vb-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 1000;
+      }
+
+      .vb-modal.is-open {
+        display: flex;
+      }
+
+      .vb-modal-card {
+        background: #111;
+        border: 2px solid var(--gold);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+
+      .vb-modal-card h2 {
+        margin: 0 0 8px;
+        font-family: "Cinzel", serif;
+        color: var(--gold-soft);
+      }
+
+      .vb-modal-card p {
+        margin: 0 0 18px;
+        color: rgba(245, 241, 232, 0.85);
+      }
+
+      @media (max-width: 640px) {
+        .vb-card {
+          padding: 22px;
+        }
+
+        .vb-topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .vb-fieldset {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+
+    <script>
+      const button = document.getElementById("submitBtn");
+      const form = document.getElementById("attendanceForm");
+      const successModal = document.getElementById("successModal");
+
+      const fields = [
+        { name: "status", errorId: "error-status" },
+        { name: "full_name", errorId: "error-full_name" },
+        { name: "room_number", errorId: "error-room_number" },
+        { name: "student_number", errorId: "error-student_number" }
+      ];
+
+      function getFieldElement(name) {
+        return form.querySelector(`[name="${name}"]`);
+      }
+
+      function showError(name, message) {
+        const errorEl = document.getElementById(`error-${name}`);
+        if (errorEl) errorEl.textContent = message || "";
+      }
+
+      function validateField(name) {
+        const el = getFieldElement(name);
+        if (!el) return true;
+        if (el.type === "radio") {
+          const checked = form.querySelector(`input[name="${name}"]:checked`);
+          if (!checked) {
+            showError(name, "Please choose one option.");
+            return false;
+          }
+          showError(name, "");
+          return true;
+        }
+        if (!el.checkValidity()) {
+          showError(name, el.validationMessage);
+          return false;
+        }
+        showError(name, "");
+        return true;
+      }
+
+      function validateAll() {
+        const ok = fields.every(f => validateField(f.name));
+        button.disabled = !ok;
+        return ok;
+      }
+
+      form.addEventListener("input", (e) => {
+        if (e.target.name) validateField(e.target.name);
+        validateAll();
+      });
+
+      form.addEventListener("change", (e) => {
+        if (e.target.name) validateField(e.target.name);
+        validateAll();
+      });
+
+      validateAll();
+
+      function openSuccessModal() {
+        successModal.classList.add("is-open");
+        successModal.setAttribute("aria-hidden", "false");
+      }
+
+      const supabaseUrl = "https://hldtrofwejpxixtbrthz.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8";
+      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        document.getElementById("error-form").textContent = "";
+        button.disabled = true;
+        const originalText = button.textContent;
+        button.textContent = "Submitting...";
+
+        try {
+          const dataToInsert = {
+            status: form.status.value,
+            full_name: form.full_name.value.trim(),
+            room_number: form.room_number.value.trim(),
+            student_number: form.student_number.value.trim()
+          };
+
+          const { error } = await supabaseClient
+            .from("attendanceMeeting")
+            .insert([dataToInsert]);
+
+          if (error) throw error;
+
+          form.reset();
+          validateAll();
+          openSuccessModal();
+        } catch (err) {
+          console.error(err);
+          document.getElementById("error-form").textContent =
+            "Error submitting attendance: " + err.message;
+        } finally {
+          button.textContent = originalText;
+          validateAll();
+        }
+      });
+    </script>
+  </body>
 </html>
