@@ -49,12 +49,6 @@
       </div>
 
       <div class="vb-field">
-        <label>Meeting PIN</label>
-        <input type="password" name="meeting_pin" maxlength="6" required>
-        <small class="vb-error" id="error-meeting_pin"></small>
-      </div>
-
-      <div class="vb-field">
         <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
         <small class="vb-error" id="error-form"></small>
       </div>
@@ -67,17 +61,6 @@
   </div>
 </div>
 
-<!-- PIN MODAL -->
-<div id="pinModal" class="vb-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="vb-modal-card" role="document">
-    <h2 class="vb-modal-title">Incorrect PIN</h2>
-    <p class="vb-modal-message">The PIN you entered is incorrect.</p>
-    <div class="vb-modal-actions">
-      <button id="pinModalOk" class="vb-button vb-modal-btn" type="button">OK</button>
-    </div>
-  </div>
-</div>
-
 <style>
   body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
   .vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
@@ -87,33 +70,6 @@
   .vb-button:disabled{ opacity:0.5; cursor:not-allowed; }
   .vb-error{ color:#ff6b6b; font-size:12px; min-height:16px; }
   .vb-error:empty{ display:none; }
-
-  .vb-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background: rgba(0,0,0,0.6);
-    align-items:center;
-    justify-content:center;
-    z-index:1000;
-    padding:20px;
-  }
-  .vb-modal.is-open{ display:flex; }
-  .vb-modal-card{
-    background:#111;
-    color:white;
-    padding:22px;
-    border:2px solid gold;
-    border-radius:12px;
-    max-width:420px;
-    width:100%;
-    text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
-  }
-  .vb-modal-title{ margin:0 0 8px; font-size:20px; }
-  .vb-modal-message{ margin:0 0 18px; color:#f2f2f2; }
-  .vb-modal-actions{ display:flex; justify-content:center; }
-  .vb-modal-btn{ min-width:120px; }
 </style>
 
 <script>
@@ -121,16 +77,11 @@ const button = document.getElementById("submitBtn");
 const successMsg = document.getElementById("successMsg");
 const form = document.getElementById("attendanceForm");
 
-const pinModal = document.getElementById("pinModal");
-const pinModalOk = document.getElementById("pinModalOk");
-const pinModalMessage = document.querySelector(".vb-modal-message");
-
 const fields = [
   { name: "status", errorId: "error-status" },
   { name: "full_name", errorId: "error-full_name" },
   { name: "room_number", errorId: "error-room_number" },
-  { name: "student_number", errorId: "error-student_number" },
-  { name: "meeting_pin", errorId: "error-meeting_pin" }
+  { name: "student_number", errorId: "error-student_number" }
 ];
 
 function getFieldElement(name) {
@@ -180,66 +131,19 @@ form.addEventListener("change", (e) => {
 
 validateAll();
 
-function openPinModal(message) {
-  pinModalMessage.textContent = message || "The PIN you entered is incorrect.";
-  pinModal.classList.add("is-open");
-  pinModal.setAttribute("aria-hidden", "false");
-}
-
-function closePinModal() {
-  pinModal.classList.remove("is-open");
-  pinModal.setAttribute("aria-hidden", "true");
-  form.meeting_pin.value = "";
-  form.meeting_pin.focus();
-}
-
-pinModalOk.addEventListener("click", closePinModal);
-pinModal.addEventListener("click", (e) => {
-  if (e.target === pinModal) closePinModal();
-});
-
-function normalizePin(value) {
-  return String(value ?? "").trim();
-}
-
 // Supabase
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   document.getElementById("error-form").textContent = "";
-  showError("meeting_pin", "");
   button.disabled = true;
   const originalText = button.textContent;
   button.textContent = "Submitting...";
 
   try {
-    // Fetch correct PIN from meeting_settings
-    const { data: pinData, error: pinError } = await supabaseClient
-      .from('meeting_settings')
-      .select('meeting_pin')
-      .single();
-
-    if (pinError) throw pinError;
-
-    const userPin = normalizePin(form.meeting_pin.value);
-    const dbPin = normalizePin(pinData?.meeting_pin);
-
-    // Compare as strings first, then as numbers to handle DB numeric types
-    const pinMatches =
-      userPin === dbPin ||
-      (userPin !== "" && dbPin !== "" && Number(userPin) === Number(dbPin));
-
-    if (!pinMatches) {
-      openPinModal("The PIN you entered is incorrect.");
-      button.disabled = false;
-      button.textContent = originalText;
-      return;
-    }
-
-    // Insert attendance only if PIN is correct
     const dataToInsert = {
       status: form.status.value,
       full_name: form.full_name.value.trim(),
@@ -262,10 +166,9 @@ form.addEventListener('submit', async (e) => {
     console.error(err);
     document.getElementById("error-form").textContent =
       "Error submitting attendance: " + err.message;
-    button.disabled = false;
-    button.textContent = originalText;
   } finally {
     button.textContent = originalText;
+    validateAll();
   }
 });
 </script>
