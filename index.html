@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Villa Bravado House Meeting</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
@@ -65,23 +67,53 @@
   </div>
 </div>
 
-<!-- POPUP MODAL FOR INCORRECT PIN -->
-<div id="pinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
-  <div style="background:#111; color:white; padding:20px; border:2px solid gold; border-radius:8px; max-width:400px; text-align:center;">
-    <p style="margin-bottom:20px;">❌ The PIN you entered is incorrect.</p>
-    <button id="pinModalOk" style="padding:10px 20px; background:gold; border:none; cursor:pointer;">OK</button>
+<!-- PIN MODAL -->
+<div id="pinModal" class="vb-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="vb-modal-card" role="document">
+    <h2 class="vb-modal-title">Incorrect PIN</h2>
+    <p class="vb-modal-message">The PIN you entered is incorrect.</p>
+    <div class="vb-modal-actions">
+      <button id="pinModalOk" class="vb-button vb-modal-btn" type="button">OK</button>
+    </div>
   </div>
 </div>
 
 <style>
-body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
-.vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
-.vb-form{ display:grid; gap:12px; }
-.vb-field{ display:flex; flex-direction:column; gap:6px; }
-.vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
-.vb-button:disabled{ opacity:0.5; cursor:not-allowed; }
-.vb-error{ color:#ff6b6b; font-size:12px; min-height:16px; }
-.vb-error:empty{ display:none; }
+  body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
+  .vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
+  .vb-form{ display:grid; gap:12px; }
+  .vb-field{ display:flex; flex-direction:column; gap:6px; }
+  .vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
+  .vb-button:disabled{ opacity:0.5; cursor:not-allowed; }
+  .vb-error{ color:#ff6b6b; font-size:12px; min-height:16px; }
+  .vb-error:empty{ display:none; }
+
+  .vb-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,0.6);
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:20px;
+  }
+  .vb-modal.is-open{ display:flex; }
+  .vb-modal-card{
+    background:#111;
+    color:white;
+    padding:22px;
+    border:2px solid gold;
+    border-radius:12px;
+    max-width:420px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .vb-modal-title{ margin:0 0 8px; font-size:20px; }
+  .vb-modal-message{ margin:0 0 18px; color:#f2f2f2; }
+  .vb-modal-actions{ display:flex; justify-content:center; }
+  .vb-modal-btn{ min-width:120px; }
 </style>
 
 <script>
@@ -91,6 +123,7 @@ const form = document.getElementById("attendanceForm");
 
 const pinModal = document.getElementById("pinModal");
 const pinModalOk = document.getElementById("pinModalOk");
+const pinModalMessage = document.querySelector(".vb-modal-message");
 
 const fields = [
   { name: "status", errorId: "error-status" },
@@ -147,6 +180,28 @@ form.addEventListener("change", (e) => {
 
 validateAll();
 
+function openPinModal(message) {
+  pinModalMessage.textContent = message || "The PIN you entered is incorrect.";
+  pinModal.classList.add("is-open");
+  pinModal.setAttribute("aria-hidden", "false");
+}
+
+function closePinModal() {
+  pinModal.classList.remove("is-open");
+  pinModal.setAttribute("aria-hidden", "true");
+  form.meeting_pin.value = "";
+  form.meeting_pin.focus();
+}
+
+pinModalOk.addEventListener("click", closePinModal);
+pinModal.addEventListener("click", (e) => {
+  if (e.target === pinModal) closePinModal();
+});
+
+function normalizePin(value) {
+  return String(value ?? "").trim();
+}
+
 // Supabase
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
 const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
@@ -169,10 +224,16 @@ form.addEventListener('submit', async (e) => {
 
     if (pinError) throw pinError;
 
-    // Check PIN
-    if (form.meeting_pin.value.trim() !== pinData.meeting_pin) {
-      // Show popup modal
-      pinModal.style.display = "flex";
+    const userPin = normalizePin(form.meeting_pin.value);
+    const dbPin = normalizePin(pinData?.meeting_pin);
+
+    // Compare as strings first, then as numbers to handle DB numeric types
+    const pinMatches =
+      userPin === dbPin ||
+      (userPin !== "" && dbPin !== "" && Number(userPin) === Number(dbPin));
+
+    if (!pinMatches) {
+      openPinModal("The PIN you entered is incorrect.");
       button.disabled = false;
       button.textContent = originalText;
       return;
@@ -206,13 +267,6 @@ form.addEventListener('submit', async (e) => {
   } finally {
     button.textContent = originalText;
   }
-});
-
-// Popup modal OK button
-pinModalOk.addEventListener("click", () => {
-  pinModal.style.display = "none";
-  form.meeting_pin.value = ""; // clear the PIN input
-  form.meeting_pin.focus();
 });
 </script>
 
