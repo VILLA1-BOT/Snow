@@ -103,7 +103,6 @@ function validateField(name) {
 
   if (!el) return true;
 
-  // Radios need special handling
   if (el.type === "radio") {
     const checked = form.querySelector(`input[name="${name}"]:checked`);
     if (!checked) {
@@ -143,30 +142,45 @@ validateAll();
 
 // Supabase
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   document.getElementById("error-form").textContent = "";
 
-  if (!validateAll()) {
-    return;
-  }
+  if (!validateAll()) return;
 
   const originalText = button.textContent;
   button.textContent = "Submitting...";
   button.disabled = true;
 
-  const dataToInsert = {
-    status: form.status.value,
-    full_name: form.full_name.value.trim(),
-    room_number: form.room_number.value.trim(),
-    student_number: form.student_number.value.trim(),
-    meeting_pin: form.meeting_pin.value.trim()
-  };
-
   try {
+    // 🔐 STEP 1: GET PIN FROM DATABASE
+    const { data: pinData, error: pinError } = await supabaseClient
+      .from('meeting_settings')
+      .select('meeting_pin')
+      .single();
+
+    if (pinError) throw pinError;
+
+    // ❌ STEP 2: CHECK PIN
+    if (form.meeting_pin.value.trim() !== pinData.meeting_pin) {
+      showError("meeting_pin", "❌ The PIN you entered is incorrect");
+      button.disabled = false;
+      button.textContent = originalText;
+      return;
+    }
+
+    // ✅ STEP 3: INSERT DATA (ONLY IF PIN CORRECT)
+    const dataToInsert = {
+      status: form.status.value,
+      full_name: form.full_name.value.trim(),
+      room_number: form.room_number.value.trim(),
+      student_number: form.student_number.value.trim(),
+      meeting_pin: form.meeting_pin.value.trim()
+    };
+
     const { error } = await supabaseClient
       .from('attendanceMeeting')
       .insert([dataToInsert]);
