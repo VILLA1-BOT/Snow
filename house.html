@@ -427,7 +427,8 @@
       }
 
       const supabaseUrl = "https://hldtrofwejpxixtbrthz.supabase.co";
-      const supabaseKey = "sb_publishable_YrPYdPgxvFxQ9RZ6YTr7Vg_Y-bNM6xh";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8";
       const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
       form.addEventListener("submit", async (e) => {
@@ -441,13 +442,12 @@
           const userPin = normalizePin(form.meeting_pin.value);
 
           const { data: pinData, error: pinError } = await supabaseClient
-  .from("attendanceMeeting")
-  .select("pin")
-  .not("pin", "is", null)
-  .order("id", { ascending: false })
-  .limit(1)
-  .single();
-
+            .from("attendanceMeeting")
+            .select("pin")
+            .not("pin", "is", null)
+            .order("id", { ascending: false })
+            .limit(1)
+            .single();
 
           if (pinError) throw pinError;
 
