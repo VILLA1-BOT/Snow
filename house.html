@@ -441,10 +441,13 @@
           const userPin = normalizePin(form.meeting_pin.value);
 
           const { data: pinData, error: pinError } = await supabaseClient
-            .from("attendanceMeeting")
-            .select("pin")
-            .not("pin", "is", null)
-            .single();
+  .from("attendanceMeeting")
+  .select("pin")
+  .not("pin", "is", null)
+  .order("id", { ascending: false })
+  .limit(1)
+  .single();
+
 
           if (pinError) throw pinError;
 
