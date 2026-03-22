@@ -476,7 +476,12 @@
   headers: {
     "Content-Type": "application/json"
   },
-  body: JSON.stringify(dataToInsert)
+  body: JSON.stringify({
+    log_name: form.log_name.value,
+    full_name: form.full_name.value,
+    student_number: form.student_number.value,
+    study_start: form.study_start.value
+  })
 });
           
 
