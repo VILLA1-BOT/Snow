@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Booking</title>
+
+  <!-- Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body>
+
+  <h2>Study Log Booking System</h2>
+
+  <!-- =========================
+       BOOKING FORM
+  ========================== -->
+  <form id="bookingForm">
+
+    <!-- Select which study log -->
+    <label>Log Name</label><br>
+    <select name="log_name" required>
+      <option value="">Select Log</option>
+      <option value="Log A">Log A</option>
+      <option value="Log B">Log B</option>
+    </select>
+    <br><br>
+
+    <!-- Full name input -->
+    <label>Full Name</label><br>
+    <input type="text" name="full_name" required>
+    <br><br>
+
+    <!-- Student number input -->
+    <label>Student Number</label><br>
+    <input type="text" name="student_number" required>
+    <br><br>
+
+    <!-- Study start time -->
+    <label>Study Start Time</label><br>
+    <input type="datetime-local" name="study_start" required>
+    <br><br>
+
+    <button type="submit">Book Slot</button>
+  </form>
+
+  <!-- Message output -->
+  <p id="message"></p>
+
+  <script>
+    // =========================
+    // 1. CONNECT TO SUPABASE
+    // =========================
+    const supabaseUrl = "https://hldtrofwejpxixtbrthz.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8"; // replace this
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById("bookingForm");
+    const message = document.getElementById("message");
+
+    // =========================
+    // 2. FORM SUBMISSION LOGIC
+    // =========================
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); // stop page reload
+
+      message.textContent = "Booking...";
+
+      // Collect form data
+      const dataToInsert = {
+        log_name: form.log_name.value,
+        full_name: form.full_name.value.trim(),
+        student_number: form.student_number.value.trim(),
+        study_start: form.study_start.value
+      };
+
+      try {
+
+        // =========================
+        // 3. INSERT INTO SUPABASE
+        // =========================
+        const { error } = await supabaseClient
+          .from("study_bookings")
+          .insert([dataToInsert]);
+
+        if (error) throw error;
+
+        // Success message
+        message.textContent = "✅ Booking successful!";
+        form.reset();
+
+        // =========================
+        // 4. SEND EMAIL NOTIFICATION
+        // =========================
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": "re_QDjzkQhN_Jrp4Noo78SRCPaY5fMbQBafr", // replace this
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            from: "onboarding@resend.dev",
+            to: "2024953552@ufs4life.ac.za", // replace this
+            subject: "New Study Booking",
+            html: `
+              <h2>New Study Booking</h2>
+              <p><b>Log:</b> ${dataToInsert.log_name}</p>
+              <p><b>Name:</b> ${dataToInsert.full_name}</p>
+              <p><b>Student Number:</b> ${dataToInsert.student_number}</p>
+              <p><b>Start Time:</b> ${dataToInsert.study_start}</p>
+            `
+          })
+        });
+
+      } catch (err) {
+        console.error(err);
+        message.textContent = "❌ Error: " + err.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
