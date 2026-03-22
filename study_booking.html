@@ -470,25 +470,15 @@
         // =========================
         // 4. SEND EMAIL NOTIFICATION
         // =========================
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": "re_QDjzkQhN_Jrp4Noo78SRCPaY5fMbQBafr", // replace this
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            from: "onboarding@resend.dev",
-            to: "2024953552@ufs4life.ac.za", // replace this
-            subject: "New Study Booking",
-            html: `
-              <h2>New Study Booking</h2>
-              <p><b>Log:</b> ${dataToInsert.log_name}</p>
-              <p><b>Name:</b> ${dataToInsert.full_name}</p>
-              <p><b>Student Number:</b> ${dataToInsert.student_number}</p>
-              <p><b>Start Time:</b> ${dataToInsert.study_start}</p>
-            `
-          })
-        });
+       
+          await fetch("https://hldtrofwejpxixtbrthz.supabase.co/functions/v1/send-study-booking-email", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(dataToInsert)
+});
+          
 
       } catch (err) {
         console.error(err);
