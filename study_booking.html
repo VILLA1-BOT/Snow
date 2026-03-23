@@ -465,8 +465,9 @@ function renderBookings(bookings) {
 async function loadBookings() {
   const { data, error } = await supabaseClient
     .from("study_bookings")
-    .select("*")
-    .order("study_start", { ascending: true });
+   .select("*")
+.gt("study_end", new Date().toISOString())
+.order("study_start", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -489,6 +490,17 @@ function subscribeToBookings() {
     .subscribe();
 }
       const form = document.getElementById("bookingForm");
+      const studyStartInput = document.querySelector('input[name="study_start"]');
+
+// Set minimum selectable time to NOW
+function updateMinTime() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  studyStartInput.min = now.toISOString().slice(0, 16);
+}
+
+updateMinTime();
+setInterval(updateMinTime, 60000); // keeps it updated every minute
       const message = document.getElementById("message");
       const submitBtn = form.querySelector('button[type="submit"]');
 
@@ -564,6 +576,19 @@ function subscribeToBookings() {
           }
 
           const start = new Date(startValue);
+          const now = new Date();
+
+if (start < now) {
+  message.textContent = "❌ You cannot book a past time.";
+  setSubmitting(false);
+  return;
+}
+const minAllowedTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 min buffer
+
+if (start < minAllowedTime) {
+  message.textContent = "❌ You must book at least 5 minutes in advance.";
+  return;
+}
           if (!startValue || Number.isNaN(start.getTime())) {
             message.textContent = "❌ Please select a valid start time.";
             return;
@@ -686,4 +711,4 @@ subscribeToBookings();
     </script>
   </body>
 </html>
-```
+
