@@ -463,7 +463,15 @@ const { data: existingBooking, error: checkError } = await supabaseClient
   .from("study_bookings")
   .select("*")
   .eq("student_number", dataToInsert.student_number)
-  .ilike("study_start", `${today}%`);
+ const startOfDay = `${today}T00:00:00`;
+const endOfDay = `${today}T23:59:59`;
+
+const { data: existingBooking, error: checkError } = await supabaseClient
+  .from("study_bookings")
+  .select("*")
+  .eq("student_number", dataToInsert.student_number)
+  .gte("study_start", startOfDay)
+  .lte("study_start", endOfDay);
 
 if (checkError) throw checkError;
 
