@@ -1,6 +1,4 @@
-Absolutely—here’s the fully formatted HTML file.
 
-```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -221,6 +219,32 @@ Absolutely—here’s the fully formatted HTML file.
         font-weight: 600;
         color: var(--gold-soft);
       }
+      .live-bookings {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+}
+
+.live-bookings h2 {
+  color: #f6d978;
+  margin-bottom: 12px;
+  font-family: "Cinzel", serif;
+}
+
+#bookingsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#bookingsList li {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 14px;
+}
 
       /* Modal */
       .modal {
@@ -381,6 +405,11 @@ Absolutely—here’s the fully formatted HTML file.
 
           <!-- Message output -->
           <p id="message"></p>
+          <!-- LIVE BOOKINGS SECTION -->
+<div class="live-bookings">
+  <h2>Live Bookings</h2>
+  <ul id="bookingsList"></ul>
+</div>
         </div>
       </main>
     </div>
@@ -411,7 +440,54 @@ Absolutely—here’s the fully formatted HTML file.
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8"; // replace this
       const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const listEl = document.getElementById("bookingsList");
 
+function formatTime(dateString) {
+  return new Date(dateString).toLocaleString();
+}
+
+function renderBookings(bookings) {
+  listEl.innerHTML = "";
+
+  bookings.forEach((b) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <strong>${b.full_name}</strong> (${b.student_number})<br/>
+      📚 ${b.log_name}<br/>
+      ⏰ ${formatTime(b.study_start)} → ${formatTime(b.study_end)}
+    `;
+
+    listEl.appendChild(li);
+  });
+}
+
+async function loadBookings() {
+  const { data, error } = await supabaseClient
+    .from("study_bookings")
+    .select("*")
+    .order("study_start", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  renderBookings(data);
+}
+
+function subscribeToBookings() {
+  supabaseClient
+    .channel("study-bookings-live")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "study_bookings" },
+      () => {
+        loadBookings();
+      }
+    )
+    .subscribe();
+}
       const form = document.getElementById("bookingForm");
       const message = document.getElementById("message");
       const submitBtn = form.querySelector('button[type="submit"]');
@@ -605,6 +681,8 @@ Absolutely—here’s the fully formatted HTML file.
           setSubmitting(false);
         }
       });
+      loadBookings();
+subscribeToBookings();
     </script>
   </body>
 </html>
