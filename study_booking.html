@@ -452,7 +452,45 @@
       };
 
       try {
+// =========================
+// CHECK IF STUDENT ALREADY BOOKED TODAY
+// =========================
 
+// get today's date (YYYY-MM-DD)
+const today = new Date().toISOString().split("T")[0];
+
+const { data: existingBooking, error: checkError } = await supabaseClient
+  .from("study_bookings")
+  .select("*")
+  .eq("student_number", dataToInsert.student_number)
+  .ilike("study_start", `${today}%`);
+
+if (checkError) throw checkError;
+
+if (existingBooking.length > 0) {
+  message.textContent = "❌ You already have a booking for today.";
+  return;
+}
+        const start = new Date(dataToInsert.study_start);
+
+// assume user selects ONLY start time → we auto-force 2 hours
+const end = new Date(start);
+end.setHours(end.getHours() + 2);
+
+dataToInsert.study_end = end.toISOString();
+        const { data: clashes, error: clashError } = await supabaseClient
+  .from("study_bookings")
+  .select("*")
+  .eq("log_name", dataToInsert.log_name)
+  .lt("study_start", dataToInsert.study_end)
+  .gt("study_end", dataToInsert.study_start);
+
+if (clashError) throw clashError;
+
+if (clashes.length > 0) {
+  message.textContent = "❌ This time slot is already taken.";
+  return;
+}
         // =========================
         // 3. INSERT INTO SUPABASE
         // =========================
@@ -471,18 +509,18 @@
         // 4. SEND EMAIL NOTIFICATION
         // =========================
        
-          await fetch("https://hldtrofwejpxixtbrthz.supabase.co/functions/v1/send-study-booking-email", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    log_name: dataToInsert.log_name,
-    full_name: dataToInsert.full_name,
-    student_number: dataToInsert.student_number,
-    study_start: dataToInsert.study_start
-  })
-});
+        //  await fetch("https://hldtrofwejpxixtbrthz.supabase.co/functions/v1/send-study-booking-email", {
+ // method: "POST",
+ // headers: {
+  //  "Content-Type": "application/json"
+ // },
+ // body: JSON.stringify({
+   // log_name: dataToInsert.log_name,
+   // full_name: dataToInsert.full_name,
+   // student_number: dataToInsert.student_number,
+  //  study_start: dataToInsert.study_start
+ // })
+//});
           
 
       } catch (err) {
