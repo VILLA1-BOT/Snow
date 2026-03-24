@@ -1,3 +1,6 @@
+Sure thing—here’s the full updated HTML exactly as requested:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -237,6 +240,31 @@
         gap: 16px;
       }
 
+      .study-carousel {
+        margin-top: 10px;
+      }
+
+      .carousel-window {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        background: rgba(10, 10, 14, 0.6);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .carousel-track {
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.8s ease;
+      }
+
+      .carousel-track img {
+        flex: 0 0 100%;
+        width: 100%;
+        height: clamp(220px, 32vw, 340px);
+        object-fit: cover;
+      }
+
       .update-item {
         padding: 16px;
         border-radius: 16px;
@@ -286,6 +314,7 @@
           <a class="active" href="index.html" aria-current="page">Home</a>
           <a href="house.html">Attendance</a>
           <a href="study_booking.html">Study Log Booking</a>
+          <a href="https://exampapers.ufs.ac.za/Account/Login">Past Exam Papers</a>
           <a href="#updates">House Updates</a>
           <a href="#community">Community</a>
         </nav>
@@ -302,6 +331,29 @@
           <div class="hero-actions">
             <a class="cta cta-primary" href="house.html">Open Attendance Register</a>
             <a class="cta cta-secondary" href="#updates">View Updates</a>
+          </div>
+        </section>
+
+        <section class="study-carousel" aria-label="Student study gallery">
+          <div class="carousel-window">
+            <div class="carousel-track">
+              <img
+                src="https://source.unsplash.com/featured/?south-africa,students,studying"
+                alt="Students studying"
+              />
+              <img
+                src="https://source.unsplash.com/featured/?black,students,studying"
+                alt="Students studying together"
+              />
+              <img
+                src="https://lh5.googleusercontent.com/p/AF1QipPzJ-R0gTjQ1ANGw6bSpFjZrLgsX31dr4LyPy8u=w1080-k-no"
+                alt="Students focused on their work"
+              />
+              <img
+                src="https://media.licdn.com/dms/image/v2/D4D22AQGIC0cI-hsv6Q/feedshare-shrink_800/B4DZb0LtHjHEAg-/0/1747853436720?e=2147483647&v=beta&t=rdZiys5CMwxI2Je_s_bKTFdkzTg4tQv6EQFGyefvg2o"
+                alt="Students studying together"
+              />
+            </div>
           </div>
         </section>
 
@@ -341,5 +393,19 @@
         Villa Bravado House Hub
       </footer>
     </div>
+    <script>
+      const track = document.querySelector(".carousel-track");
+      if (track) {
+        const slides = Array.from(track.querySelectorAll("img"));
+        if (slides.length > 1) {
+          let index = 0;
+          setInterval(() => {
+            index = (index + 1) % slides.length;
+            track.style.transform = `translateX(-${index * 100}%)`;
+          }, 8000);
+        }
+      }
+    </script>
   </body>
 </html>
+```
