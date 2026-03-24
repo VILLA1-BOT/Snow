@@ -1,107 +1,18 @@
+Here you go — the full updated HTML with only the 3 images you specified, a smaller carousel, and added life (without changing the background):
+
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Villa Bravado Corridor Study Day</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <title>Villa Bravado | Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Manrope:wght@300;500;700&display=swap"
       rel="stylesheet"
     />
-  </head>
-
-  <body>
-    <div class="vb-wrap">
-      <div class="vb-card">
-        <div class="vb-topbar">
-          <div class="vb-brand">
-            <div class="vb-badge">VB</div>
-            <div>
-              <h1>Villa Bravado</h1>
-              <p>Corridor study attendance</p>
-            </div>
-          </div>
-          <a class="vb-button vb-button-ghost" href="index.html">Back to Home</a>
-        </div>
-
-        <form class="vb-form" id="attendanceForm" novalidate>
-          <div class="vb-field">
-            <fieldset class="vb-fieldset">
-              <legend>Cub or Senior</legend>
-              <label><input type="radio" name="status" value="Cub" required /> Cub</label>
-              <label><input type="radio" name="status" value="Senior" required /> Senior</label>
-            </fieldset>
-            <small class="vb-error" id="error-status"></small>
-          </div>
-
-          <div class="vb-field">
-            <label>Full Name</label>
-            <input type="text" name="full_name" placeholder="e.g., John Doe" required />
-            <small class="vb-error" id="error-full_name"></small>
-          </div>
-
-          <div class="vb-field">
-            <label>Room Number</label>
-            <input type="text" name="room_number" placeholder="e.g., 12" required />
-            <small class="vb-error" id="error-room_number"></small>
-          </div>
-
-          <div class="vb-field">
-            <label>Student Number</label>
-            <input
-              type="text"
-              name="student_number"
-              placeholder="2023123456"
-              maxlength="10"
-              minlength="10"
-              required
-            />
-            <small class="vb-error" id="error-student_number"></small>
-          </div>
-
-          <div class="vb-field">
-            <label>Meeting PIN</label>
-            <input
-              type="password"
-              name="meeting_pin"
-              placeholder="Enter meeting PIN"
-              maxlength="6"
-              minlength="4"
-              inputmode="numeric"
-              required
-            />
-            <small class="vb-error" id="error-meeting_pin"></small>
-          </div>
-
-          <div class="vb-field vb-submit-row">
-            <button type="submit" id="submitBtn" class="vb-button" disabled>
-              Submit Attendance
-            </button>
-            <small class="vb-error" id="error-form"></small>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div id="successModal" class="vb-modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="vb-modal-card" role="document">
-        <h2>Aweh Villaman!</h2>
-        <p>All the best on your academics.</p>
-        <a class="vb-button" href="index.html">Back to Homepage</a>
-      </div>
-    </div>
-
-    <div id="pinModal" class="vb-modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="vb-modal-card" role="document">
-        <h2>Incorrect PIN</h2>
-        <p>The PIN you entered is incorrect.</p>
-        <button id="pinModalOk" class="vb-button" type="button">Try Again</button>
-      </div>
-    </div>
-
     <style>
       :root {
         --black: #0b0b0e;
@@ -111,6 +22,7 @@
         --accent-teal: #37d4b3;
         --accent-coral: #ff6f61;
         --accent-sky: #57c7ff;
+        --accent-lime: #b5ff5a;
       }
 
       * {
@@ -122,48 +34,65 @@
         font-family: "Manrope", "Segoe UI", sans-serif;
         background: var(--black);
         color: var(--ink);
-        min-height: 100vh;
       }
 
-      .vb-wrap {
+      .page {
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 32px 20px;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
         background:
-          radial-gradient(circle at 10% 10%, rgba(87, 199, 255, 0.25), transparent 45%),
-          radial-gradient(circle at 85% 15%, rgba(255, 111, 97, 0.25), transparent 40%),
-          radial-gradient(circle at 15% 80%, rgba(55, 212, 179, 0.25), transparent 45%),
+          radial-gradient(circle at 10% 10%, rgba(87, 199, 255, 0.35), transparent 45%),
+          radial-gradient(circle at 85% 15%, rgba(255, 111, 97, 0.4), transparent 40%),
+          radial-gradient(circle at 15% 80%, rgba(55, 212, 179, 0.35), transparent 45%),
+          radial-gradient(circle at 85% 85%, rgba(181, 255, 90, 0.2), transparent 50%),
           linear-gradient(145deg, #09090c 20%, #15151b 80%);
       }
 
-      .vb-card {
-        width: min(720px, 100%);
-        padding: 28px;
-        border: 1px solid rgba(212, 175, 55, 0.6);
-        border-radius: 16px;
-        background: rgba(12, 12, 16, 0.9);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(10px);
+      .page::before,
+      .page::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        opacity: 0.25;
+        filter: blur(0px);
+        pointer-events: none;
       }
 
-      .vb-topbar {
+      .page::before {
+        width: 420px;
+        height: 420px;
+        background: linear-gradient(140deg, var(--gold), transparent);
+        top: -120px;
+        right: -160px;
+      }
+
+      .page::after {
+        width: 360px;
+        height: 360px;
+        background: linear-gradient(220deg, var(--accent-sky), transparent);
+        bottom: -140px;
+        left: -140px;
+      }
+
+      header {
+        padding: 28px clamp(24px, 5vw, 64px);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 18px;
+        gap: 20px;
+        position: relative;
+        z-index: 1;
       }
 
-      .vb-brand {
+      .brand {
         display: flex;
         align-items: center;
         gap: 14px;
       }
 
-      .vb-badge {
+      .brand-mark {
         width: 46px;
         height: 46px;
         border-radius: 14px;
@@ -176,320 +105,342 @@
         box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
       }
 
-      .vb-brand h1 {
+      .brand h1 {
         font-family: "Cinzel", serif;
-        font-size: clamp(20px, 3.5vw, 28px);
+        font-size: clamp(20px, 3vw, 28px);
         margin: 0;
+        letter-spacing: 0.5px;
       }
 
-      .vb-brand p {
-        margin: 4px 0 0;
-        color: rgba(245, 241, 232, 0.75);
-        font-size: 13px;
-      }
-
-      .vb-form {
-        display: grid;
-        gap: 14px;
-      }
-
-      .vb-field {
+      .tabs {
         display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .vb-field label {
-        font-weight: 600;
-        color: rgba(245, 241, 232, 0.9);
-      }
-
-      .vb-field input[type="text"],
-      .vb-field input[type="password"] {
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--ink);
-        font-size: 15px;
-        outline: none;
-      }
-
-      .vb-field input:focus {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-      }
-
-      .vb-fieldset {
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 12px;
-        padding: 12px;
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      .vb-fieldset legend {
-        padding: 0 8px;
-        color: var(--gold-soft);
-        font-weight: 600;
-      }
-
-      .vb-fieldset label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .vb-submit-row {
-        margin-top: 6px;
-      }
-
-      .vb-button {
-        padding: 12px 20px;
-        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
-        border: none;
-        color: #111;
-        font-weight: 700;
+        gap: 10px;
+        padding: 8px;
         border-radius: 999px;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .vb-button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 24px rgba(212, 175, 55, 0.35);
-      }
-
-      .vb-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-
-      .vb-button-ghost {
         background: rgba(255, 255, 255, 0.08);
-        color: var(--ink);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        backdrop-filter: blur(10px);
+      }
+
+      .tabs a {
         text-decoration: none;
+        color: var(--ink);
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
       }
 
-      .vb-error {
-        color: #ff6b6b;
-        font-size: 12px;
-        min-height: 16px;
+      .tabs a:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.1);
       }
 
-      .vb-error:empty {
-        display: none;
+      .tabs a.active {
+        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+        color: #111;
+        box-shadow: 0 10px 24px rgba(212, 175, 55, 0.35);
       }
 
-      .vb-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
+      main {
+        flex: 1;
+        padding: 0 clamp(24px, 6vw, 80px) 60px;
+        display: grid;
+        gap: 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero {
+        margin-top: clamp(16px, 5vw, 40px);
+        display: grid;
+        gap: 24px;
         align-items: center;
-        justify-content: center;
-        padding: 20px;
-        z-index: 1000;
       }
 
-      .vb-modal.is-open {
-        display: flex;
-      }
-
-      .vb-modal-card {
-        background: #111;
-        border: 2px solid var(--gold);
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        max-width: 420px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-      }
-
-      .vb-modal-card h2 {
-        margin: 0 0 8px;
+      .hero h2 {
         font-family: "Cinzel", serif;
-        color: var(--gold-soft);
+        font-size: clamp(32px, 5vw, 56px);
+        margin: 0;
+        line-height: 1.1;
+        text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
       }
 
-      .vb-modal-card p {
-        margin: 0 0 18px;
+      .hero p {
+        font-size: clamp(16px, 2vw, 20px);
+        max-width: 680px;
         color: rgba(245, 241, 232, 0.85);
       }
 
-      @media (max-width: 640px) {
-        .vb-card {
-          padding: 22px;
-        }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
 
-        .vb-topbar {
+      .cta {
+        text-decoration: none;
+        padding: 14px 24px;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+      }
+
+      .cta-primary {
+        background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+        color: #111;
+        box-shadow: 0 14px 30px rgba(212, 175, 55, 0.35);
+        animation: pulse 3.4s ease-in-out infinite;
+      }
+
+      .cta-secondary {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .card-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .info-card {
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(14, 14, 18, 0.8);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        position: relative;
+        overflow: hidden;
+        min-height: 140px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .info-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .info-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 32px rgba(0, 0, 0, 0.35);
+      }
+
+      .info-card h3 {
+        margin-top: 0;
+        font-size: 18px;
+        color: var(--gold-soft);
+      }
+
+      .info-card p {
+        margin: 0;
+        color: rgba(245, 241, 232, 0.75);
+        font-size: 14px;
+      }
+
+      .updates {
+        display: grid;
+        gap: 16px;
+      }
+
+      .study-carousel {
+        margin-top: 10px;
+        max-width: 980px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .carousel-window {
+        position: relative;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        background: rgba(10, 10, 14, 0.6);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .carousel-window::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          140deg,
+          rgba(11, 11, 14, 0.15),
+          rgba(11, 11, 14, 0.45)
+        );
+        pointer-events: none;
+      }
+
+      .carousel-track {
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.8s ease;
+      }
+
+      .carousel-track img {
+        flex: 0 0 100%;
+        width: 100%;
+        height: clamp(180px, 24vw, 260px);
+        object-fit: cover;
+      }
+
+      .update-item {
+        padding: 16px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .update-item strong {
+        color: var(--accent-coral);
+      }
+
+      footer {
+        text-align: center;
+        padding: 24px;
+        color: rgba(245, 241, 232, 0.55);
+        font-size: 13px;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: translateY(0);
+          box-shadow: 0 14px 30px rgba(212, 175, 55, 0.35);
+        }
+        50% {
+          transform: translateY(-2px);
+          box-shadow: 0 18px 36px rgba(212, 175, 55, 0.45);
+        }
+        100% {
+          transform: translateY(0);
+          box-shadow: 0 14px 30px rgba(212, 175, 55, 0.35);
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
           flex-direction: column;
           align-items: flex-start;
         }
 
-        .vb-fieldset {
-          flex-direction: column;
-          align-items: flex-start;
+        .tabs {
+          width: 100%;
+          flex-wrap: wrap;
+          justify-content: flex-start;
         }
       }
     </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="brand">
+          <div class="brand-mark">VB</div>
+          <div>
+            <h1>Villa Bravado</h1>
+            <div style="color: rgba(245, 241, 232, 0.7); font-size: 13px;">
+              House Hub and Attendance
+            </div>
+          </div>
+        </div>
 
+        <nav class="tabs" aria-label="Main">
+          <a class="active" href="index.html" aria-current="page">Home</a>
+          <a href="house.html">Attendance</a>
+          <a href="study_booking.html">Study Log Booking</a>
+          <a href="https://exampapers.ufs.ac.za/Account/Login">Past Exam Papers</a>
+          <a href="#updates">House Updates</a>
+          <a href="#community">Community</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <h2>Welcome to the Villa Bravado Hub</h2>
+          <p>
+            A colorful, easy-to-use space for keeping the house connected. Check in for
+            meetings, view the latest updates, and stay aligned with everything happening
+            at Villa Bravado.
+          </p>
+          <div class="hero-actions">
+            <a class="cta cta-primary" href="house.html">Open Attendance Register</a>
+            <a class="cta cta-secondary" href="#updates">View Updates</a>
+          </div>
+        </section>
+
+        <section class="study-carousel" aria-label="Student study gallery">
+          <div class="carousel-window">
+            <div class="carousel-track">
+              <img
+                src="https://lh5.googleusercontent.com/p/AF1QipPzJ-R0gTjQ1ANGw6bSpFjZrLgsX31dr4LyPy8u=w1080-k-no"
+                alt="Students focused on their work"
+              />
+              <img
+                src="https://media.licdn.com/dms/image/v2/D4D22AQGIC0cI-hsv6Q/feedshare-shrink_800/B4DZb0LtHjHEAg-/0/1747853436720?e=2147483647&v=beta&t=rdZiys5CMwxI2Je_s_bKTFdkzTg4tQv6EQFGyefvg2o"
+                alt="Students studying together"
+              />
+              <img
+                src="https://tse1.mm.bing.net/th/id/OIP.vxERemQ6GGVAe3jnTcdsDAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                alt="Students studying"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="card-grid" id="community">
+          <article class="info-card">
+            <h3>House Pride</h3>
+            <p>Celebrate milestones, birthdays, and wins from the VB family.</p>
+          </article>
+          <article class="info-card">
+            <h3>Quick Notices</h3>
+            <p>Short reminders and highlights you can scan in seconds.</p>
+          </article>
+          <article class="info-card">
+            <h3>Upcoming Events</h3>
+            <p>Preview the next house events and key dates at a glance.</p>
+          </article>
+          <article class="info-card">
+            <h3>Support Zone</h3>
+            <p>Find who to contact for help, reporting, or coordination.</p>
+          </article>
+        </section>
+
+        <section class="updates" id="updates">
+          <div class="update-item">
+            <strong>House Update:</strong> Attendance opens 30 minutes before each meeting.
+          </div>
+          <div class="update-item">
+            <strong>Events:</strong> Look out for the monthly social and study night details.
+          </div>
+          <div class="update-item">
+            <strong>Reminders:</strong> Keep your room number and student number handy.
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        Villa Bravado House Hub
+      </footer>
+    </div>
     <script>
-      const button = document.getElementById("submitBtn");
-      const form = document.getElementById("attendanceForm");
-      const successModal = document.getElementById("successModal");
-      const pinModal = document.getElementById("pinModal");
-      const pinModalOk = document.getElementById("pinModalOk");
-
-      const fields = [
-        { name: "status", errorId: "error-status" },
-        { name: "full_name", errorId: "error-full_name" },
-        { name: "room_number", errorId: "error-room_number" },
-        { name: "student_number", errorId: "error-student_number" },
-        { name: "meeting_pin", errorId: "error-meeting_pin" }
-      ];
-
-      function getFieldElement(name) {
-        return form.querySelector(`[name="${name}"]`);
-      }
-
-      function showError(name, message) {
-        const errorEl = document.getElementById(`error-${name}`);
-        if (errorEl) errorEl.textContent = message || "";
-      }
-
-      function validateField(name) {
-        const el = getFieldElement(name);
-        if (!el) return true;
-        if (el.type === "radio") {
-          const checked = form.querySelector(`input[name="${name}"]:checked`);
-          if (!checked) {
-            showError(name, "Please choose one option.");
-            return false;
-          }
-          showError(name, "");
-          return true;
+      const track = document.querySelector(".carousel-track");
+      if (track) {
+        const slides = Array.from(track.querySelectorAll("img"));
+        if (slides.length > 1) {
+          let index = 0;
+          setInterval(() => {
+            index = (index + 1) % slides.length;
+            track.style.transform = `translateX(-${index * 100}%)`;
+          }, 8000);
         }
-        if (!el.checkValidity()) {
-          showError(name, el.validationMessage);
-          return false;
-        }
-        showError(name, "");
-        return true;
       }
-
-      function validateAll() {
-        const ok = fields.every(f => validateField(f.name));
-        button.disabled = !ok;
-        return ok;
-      }
-
-      form.addEventListener("input", (e) => {
-        if (e.target.name) validateField(e.target.name);
-        validateAll();
-      });
-
-      form.addEventListener("change", (e) => {
-        if (e.target.name) validateField(e.target.name);
-        validateAll();
-      });
-
-      validateAll();
-
-      function openSuccessModal() {
-        successModal.classList.add("is-open");
-        successModal.setAttribute("aria-hidden", "false");
-      }
-
-      function openPinModal() {
-        pinModal.classList.add("is-open");
-        pinModal.setAttribute("aria-hidden", "false");
-      }
-
-      function closePinModal() {
-        pinModal.classList.remove("is-open");
-        pinModal.setAttribute("aria-hidden", "true");
-        form.meeting_pin.value = "";
-        form.meeting_pin.focus();
-      }
-
-      pinModalOk.addEventListener("click", closePinModal);
-      pinModal.addEventListener("click", (e) => {
-        if (e.target === pinModal) closePinModal();
-      });
-
-      function normalizePin(value) {
-        return String(value ?? "").trim();
-      }
-
-      const supabaseUrl = "https://hldtrofwejpxixtbrthz.supabase.co";
-      const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8";
-      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        document.getElementById("error-form").textContent = "";
-        button.disabled = true;
-        const originalText = button.textContent;
-        button.textContent = "Submitting...";
-
-        try {
-          const userPin = normalizePin(form.meeting_pin.value);
-
-          const { data: pinData, error: pinError } = await supabaseClient
-            .from("attendanceMeeting")
-            .select("pin")
-            .not("pin", "is", null)
-            .order("id", { ascending: false })
-            .limit(1)
-            .single();
-
-          if (pinError) throw pinError;
-
-          const dbPin = normalizePin(pinData?.pin);
-          const pinMatches =
-            userPin === dbPin ||
-            (userPin !== "" && dbPin !== "" && Number(userPin) === Number(dbPin));
-
-          if (!pinMatches) {
-            showError("meeting_pin", "Incorrect PIN.");
-            openPinModal();
-            button.disabled = false;
-            button.textContent = originalText;
-            return;
-          }
-          showError("meeting_pin", "");
-
-          const dataToInsert = {
-            status: form.status.value,
-            full_name: form.full_name.value.trim(),
-            room_number: form.room_number.value.trim(),
-            student_number: form.student_number.value.trim()
-          };
-
-          const { error } = await supabaseClient
-            .from("attendanceMeeting")
-            .insert([dataToInsert]);
-
-          if (error) throw error;
-
-          form.reset();
-          validateAll();
-          openSuccessModal();
-        } catch (err) {
-          console.error(err);
-          document.getElementById("error-form").textContent =
-            "Error submitting attendance: " + err.message;
-        } finally {
-          button.textContent = originalText;
-          validateAll();
-        }
-      });
     </script>
   </body>
 </html>
+```
