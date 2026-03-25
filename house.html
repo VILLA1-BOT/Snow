@@ -276,37 +276,40 @@ input:focus{
   box-shadow:none;
 }
 
+/* Centered message */
 .vb-toast{
   display:none;
-  margin-top:10px;
-  padding:12px;
-  border-radius:10px;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:70;
+  max-width:460px;
+  width:min(92vw, 460px);
+  padding:14px 16px;
+  border-radius:12px;
+  text-align:center;
   color:#f7e7ba;
   border:1px solid rgba(214,178,94,0.35);
-  background:rgba(214,178,94,0.12);
+  background:rgba(17,18,24,0.95);
+  box-shadow:0 24px 60px rgba(0,0,0,0.55);
+  pointer-events:none;
 }
 
 .vb-toast--error{
   color:#ffd6d6;
   border:1px solid rgba(214,178,94,0.35);
-  background:rgba(255, 90, 90, 0.08);
+  background:rgba(30, 15, 15, 0.95);
 }
 
 .vb-toast.show{
   display:block;
-  animation:fadeSlide 300ms ease;
+  animation:fadePop 260ms ease;
 }
 
-.vb-code{
-  display:inline-block;
-  margin-left:6px;
-  padding:2px 8px;
-  border-radius:999px;
-  border:1px solid rgba(214,178,94,0.5);
-  font-family:"Cinzel", serif;
-  letter-spacing:1px;
-  color:#111;
-  background:linear-gradient(145deg, #f3d07a, #b58b39);
+@keyframes fadePop{
+  from{ opacity:0; transform:translate(-50%, -50%) scale(0.98); }
+  to{ opacity:1; transform:translate(-50%, -50%) scale(1); }
 }
 
 .vb-quote{
@@ -314,11 +317,6 @@ input:focus{
   margin-top:6px;
   color:var(--gold-soft);
   font-style:italic;
-}
-
-@keyframes fadeSlide{
-  from{ opacity:0; transform:translateY(6px); }
-  to{ opacity:1; transform:translateY(0); }
 }
 
 /* Modal */
@@ -330,7 +328,7 @@ input:focus{
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:50;
+  z-index:80;
 }
 
 .vb-modal.is-open{ display:flex; }
@@ -427,11 +425,11 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") hidePinError();
 });
 
-const studyCodes = [
-  { code: "VB-GOLD-710", message: "Small steps daily become mastery." },
-  { code: "FOCUS-LOCK-9", message: "Protect your study time like treasure." },
-  { code: "BRAVADO-ARC-21", message: "Consistency beats intensity, every time." },
-  { code: "DISCIPLINE-8", message: "Show up today, thank yourself tomorrow." }
+const studyMessages = [
+  "Small steps daily become mastery.",
+  "Protect your study time like treasure.",
+  "Consistency beats intensity, every time.",
+  "Show up today, thank yourself tomorrow."
 ];
 
 // Supabase (UNCHANGED)
@@ -484,18 +482,17 @@ form.addEventListener('submit', async (e) => {
       const msg = (insertError.message || "").toLowerCase();
       if (msg.includes("duplicate") || msg.includes("unique")) {
         showMessage("error",
-          "<strong>Already recorded.</strong> This student number has already submitted attendance. Thank you for being punctual.");
+          "<strong>Already recorded.</strong> This student number has already submitted attendance.<span class='vb-quote'>Thank you for being punctual and committed.</span>");
         setSubmitting(false);
         return;
       }
       throw insertError;
     }
 
-    const pick = studyCodes[Math.floor(Math.random() * studyCodes.length)];
+    const pick = studyMessages[Math.floor(Math.random() * studyMessages.length)];
     showMessage("success", `
       <strong>Thank you.</strong> Attendance received.
-      <span class="vb-code">Study Code: ${pick.code}</span>
-      <span class="vb-quote">${pick.message}</span>
+      <span class="vb-quote">${pick}</span>
     `);
 
     form.reset();
