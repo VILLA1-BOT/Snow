@@ -65,9 +65,9 @@ form.addEventListener("input", checkForm);
 form.addEventListener("change", checkForm);
 checkForm();
 
-// Supabase
+// Supabase (UNCHANGED)
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
-const supabaseKey = 'YOUR_ANON_KEY';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZHRyb2Z3ZWpweGl4dGJydGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTUxMTQsImV4cCI6MjA4OTE3MTExNH0.N5DsYTVezE_DL5fBGdobyIdTlauklJgB7UeTsNybDv8';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 form.addEventListener('submit', async (e) => {
@@ -76,11 +76,11 @@ form.addEventListener('submit', async (e) => {
   const enteredPin = form.meeting_pin.value.trim();
 
   try {
-    // 🔍 STEP 1: GET FIRST ROW (PIN SOURCE)
+    // GET FIRST ROW PIN
     const { data, error } = await supabaseClient
       .from('attendanceMeeting')
       .select('meeting_pin')
-      .order('id', { ascending: true }) // first row
+      .order('id', { ascending: true })
       .limit(1)
       .single();
 
@@ -88,13 +88,13 @@ form.addEventListener('submit', async (e) => {
 
     const correctPin = data.meeting_pin;
 
-    // ❌ STEP 2: VALIDATE PIN
+    // CHECK PIN
     if (enteredPin !== correctPin) {
       alert("Invalid Meeting PIN");
       return;
     }
 
-    // ✅ STEP 3: INSERT NEW ATTENDANCE (NO PIN)
+    // INSERT WITHOUT PIN
     const dataToInsert = {
       status: form.status.value,
       full_name: form.full_name.value.trim(),
