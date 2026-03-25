@@ -1,8 +1,13 @@
+Love this—black and gold with a clean, elegant flip-in is going to feel premium. Here’s your upgraded, fully responsive version with a subtle 3D flip, a polished success message, and a custom incorrect‑PIN popup (no key changes, no placeholders):
+
+```html
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Villa Bravado House Meeting</title>
+  <title>Villa Bravado Study Day</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -13,7 +18,7 @@
       <div class="vb-badge">VB</div>
       <div>
         <h1>Villa Bravado</h1>
-        <p>House Meeting Attendance Register</p>
+        <p>Study Day Register</p>
       </div>
     </div>
 
@@ -21,8 +26,8 @@
 
       <fieldset class="vb-fieldset">
         <legend>Cub or Senior</legend>
-        <label><input type="radio" name="status" value="Cub" required> Cub</label>
-        <label><input type="radio" name="status" value="Senior" required> Senior</label>
+        <label class="vb-radio"><input type="radio" name="status" value="Cub" required> <span>Cub</span></label>
+        <label class="vb-radio"><input type="radio" name="status" value="Senior" required> <span>Senior</span></label>
       </fieldset>
 
       <label>Full Name</label>
@@ -39,18 +44,252 @@
 
       <button type="submit" id="submitBtn" class="vb-button" disabled>Submit Attendance</button>
 
-      <p id="successMsg" style="color: lightgreen; display:none;">Attendance submitted successfully!</p>
+      <div id="successMsg" class="vb-toast" role="status" aria-live="polite">
+        Thank you. Your attendance has been received and recorded.
+      </div>
 
     </form>
   </div>
 </div>
 
+<!-- Incorrect PIN Popup -->
+<div class="vb-modal" id="pinModal" aria-hidden="true">
+  <div class="vb-modal-card" role="alertdialog" aria-labelledby="pinTitle" aria-describedby="pinDesc">
+    <h3 id="pinTitle">Incorrect PIN</h3>
+    <p id="pinDesc">The Meeting PIN you entered is not correct. Please try again.</p>
+    <button type="button" class="vb-button vb-button--ghost" id="pinModalClose">Close</button>
+  </div>
+</div>
+
 <style>
-body{ background:#0c0c0f; color:white; font-family:Arial; padding:20px; }
-.vb-card{ max-width:640px; margin:auto; padding:25px; border:1px solid gold; border-radius:12px; }
-.vb-form{ display:grid; gap:10px; }
-.vb-button{ padding:12px; background:gold; border:none; cursor:pointer; }
-.vb-button:disabled{ opacity:0.5; }
+:root{
+  --bg:#0a0a0d;
+  --bg-2:#0f0f15;
+  --gold:#d6b25e;
+  --gold-soft:#f0d889;
+  --text:#f2f2f2;
+  --muted:#b6b6b6;
+  --card:#111218;
+  --line:rgba(214,178,94,0.35);
+  --shadow:0 24px 60px rgba(0,0,0,0.55);
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(214,178,94,0.08), transparent 60%),
+    radial-gradient(1200px 600px at 100% 0%, rgba(214,178,94,0.06), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:"Source Sans 3", Arial, sans-serif;
+  padding:24px;
+}
+
+.vb-wrap{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.vb-card{
+  width:100%;
+  max-width:720px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) , var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:28px;
+  box-shadow:var(--shadow);
+  transform-style:preserve-3d;
+  animation:flipIn 800ms ease;
+}
+
+@keyframes flipIn{
+  0%{ transform:perspective(1200px) rotateX(12deg) rotateY(-12deg) scale(0.98); opacity:0; }
+  100%{ transform:perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1); opacity:1; }
+}
+
+.vb-card:hover{
+  transform:perspective(1200px) rotateX(1deg) rotateY(-1deg);
+  transition:transform 300ms ease;
+}
+
+.vb-header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.vb-header h1{
+  margin:0;
+  font-family:"Cinzel", serif;
+  font-weight:600;
+  letter-spacing:1px;
+  font-size:26px;
+}
+
+.vb-header p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:14px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.vb-badge{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-family:"Cinzel", serif;
+  font-weight:600;
+  letter-spacing:1px;
+  background:linear-gradient(145deg, #f3d07a, #b58b39);
+  color:#111;
+  box-shadow:0 10px 24px rgba(214,178,94,0.35);
+}
+
+.vb-form{
+  display:grid;
+  gap:12px;
+}
+
+label{
+  font-size:14px;
+  color:var(--gold-soft);
+  margin-top:6px;
+}
+
+input[type="text"],
+input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  background:var(--bg-2);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--text);
+  border-radius:10px;
+  outline:none;
+  transition:border 200ms ease, box-shadow 200ms ease;
+}
+
+input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(214,178,94,0.2);
+}
+
+.vb-fieldset{
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.vb-fieldset legend{
+  padding:0 8px;
+  color:var(--gold-soft);
+  font-size:13px;
+  letter-spacing:0.5px;
+}
+
+.vb-radio{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+}
+
+.vb-radio input{
+  accent-color:var(--gold);
+}
+
+.vb-button{
+  margin-top:6px;
+  padding:12px 14px;
+  background:linear-gradient(140deg, #f3d07a, #b58b39);
+  color:#111;
+  font-weight:600;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  transition:transform 120ms ease, box-shadow 200ms ease, opacity 200ms ease;
+  box-shadow:0 10px 20px rgba(214,178,94,0.25);
+}
+
+.vb-button:hover{ transform:translateY(-1px); }
+.vb-button:disabled{ opacity:0.5; cursor:not-allowed; box-shadow:none; }
+
+.vb-button--ghost{
+  background:transparent;
+  color:var(--gold);
+  border:1px solid var(--gold);
+  box-shadow:none;
+}
+
+.vb-toast{
+  display:none;
+  margin-top:10px;
+  padding:12px;
+  background:rgba(214,178,94,0.12);
+  border:1px solid rgba(214,178,94,0.35);
+  border-radius:10px;
+  color:#f7e7ba;
+}
+
+.vb-toast.show{
+  display:block;
+  animation:fadeSlide 300ms ease;
+}
+
+@keyframes fadeSlide{
+  from{ opacity:0; transform:translateY(6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* Modal */
+.vb-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+}
+
+.vb-modal.is-open{ display:flex; }
+
+.vb-modal-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  max-width:420px;
+  width:100%;
+  box-shadow:var(--shadow);
+}
+
+.vb-modal-card h3{
+  margin:0 0 8px;
+  color:var(--gold-soft);
+}
+
+.vb-modal-card p{
+  margin:0 0 14px;
+  color:var(--text);
+}
+
+/* Responsive */
+@media (max-width: 620px){
+  body{ padding:16px; }
+  .vb-card{ padding:20px; }
+  .vb-header{ flex-direction:column; align-items:flex-start; }
+}
 </style>
 
 <script>
@@ -58,12 +297,33 @@ const button = document.getElementById("submitBtn");
 const successMsg = document.getElementById("successMsg");
 const form = document.getElementById("attendanceForm");
 
+const pinModal = document.getElementById("pinModal");
+const pinModalClose = document.getElementById("pinModalClose");
+
 function checkForm() {
   button.disabled = !form.checkValidity();
 }
 form.addEventListener("input", checkForm);
 form.addEventListener("change", checkForm);
 checkForm();
+
+function showPinError(){
+  pinModal.classList.add("is-open");
+  pinModal.setAttribute("aria-hidden", "false");
+}
+
+function hidePinError(){
+  pinModal.classList.remove("is-open");
+  pinModal.setAttribute("aria-hidden", "true");
+}
+
+pinModalClose.addEventListener("click", hidePinError);
+pinModal.addEventListener("click", (e) => {
+  if (e.target === pinModal) hidePinError();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") hidePinError();
+});
 
 // Supabase (UNCHANGED)
 const supabaseUrl = 'https://hldtrofwejpxixtbrthz.supabase.co';
@@ -90,7 +350,7 @@ form.addEventListener('submit', async (e) => {
 
     // CHECK PIN
     if (enteredPin !== correctPin) {
-      alert("Invalid Meeting PIN");
+      showPinError();
       return;
     }
 
@@ -108,12 +368,12 @@ form.addEventListener('submit', async (e) => {
 
     if (insertError) throw insertError;
 
-    successMsg.style.display = 'block';
+    successMsg.classList.add('show');
     form.reset();
     button.disabled = true;
 
     setTimeout(() => {
-      successMsg.style.display = 'none';
+      successMsg.classList.remove('show');
     }, 3000);
 
   } catch (err) {
@@ -125,3 +385,6 @@ form.addEventListener('submit', async (e) => {
 
 </body>
 </html>
+```
+
+If you want the flip to happen only on load (no hover tilt), or want a different gold tone (more amber vs champagne), tell me and I’ll adjust it instantly.
