@@ -293,7 +293,7 @@ input:focus{
   border:1px solid rgba(214,178,94,0.35);
   background:rgba(17,18,24,0.95);
   box-shadow:0 24px 60px rgba(0,0,0,0.55);
-  pointer-events:none;
+  pointer-events:auto;
 }
 
 .vb-toast--error{
@@ -317,6 +317,19 @@ input:focus{
   margin-top:6px;
   color:var(--gold-soft);
   font-style:italic;
+}
+
+.vb-link-btn{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 16px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:700;
+  letter-spacing:0.5px;
+  color:#111;
+  background:linear-gradient(140deg, #f3d07a, #b58b39);
+  box-shadow:0 8px 18px rgba(214,178,94,0.25);
 }
 
 /* Modal */
@@ -482,7 +495,7 @@ form.addEventListener('submit', async (e) => {
       const msg = (insertError.message || "").toLowerCase();
       if (msg.includes("duplicate") || msg.includes("unique")) {
         showMessage("error",
-          "<strong>Already recorded.</strong> This student number has already submitted attendance.<span class='vb-quote'>Thank you for being punctual and committed.</span>");
+          "<strong>Already recorded.</strong> This student number has already submitted attendance.<span class='vb-quote'>Thank you for being punctual and committed.</span><a class='vb-link-btn' href='index.html'>Go Home</a>");
         setSubmitting(false);
         return;
       }
