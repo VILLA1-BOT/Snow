@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -116,14 +117,17 @@ body{
 
 .vb-card.is-submitting{
   transform-origin:bottom center;
-  animation:submitFlip 900ms ease;
+  animation:submitFlip360 1000ms ease-in-out;
 }
 
-@keyframes submitFlip{
+.vb-card.is-submitting:hover{
+  transform:none;
+}
+
+@keyframes submitFlip360{
   0%{ transform:perspective(1200px) rotateX(0deg); }
-  40%{ transform:perspective(1200px) rotateX(-70deg); }
-  70%{ transform:perspective(1200px) rotateX(0deg); }
-  100%{ transform:perspective(1200px) rotateX(0deg); }
+  50%{ transform:perspective(1200px) rotateX(-180deg); }
+  100%{ transform:perspective(1200px) rotateX(-360deg); }
 }
 
 .vb-header{
@@ -220,7 +224,7 @@ input:focus{
 
 .vb-button{
   margin-top:6px;
-  padding:12px 14px;
+  padding:12px 22px;
   background:linear-gradient(140deg, #f3d07a, #b58b39);
   color:#111;
   font-weight:700;
@@ -233,6 +237,13 @@ input:focus{
   overflow:hidden;
   transition:transform 120ms ease, box-shadow 200ms ease, opacity 200ms ease;
   box-shadow:0 10px 20px rgba(214,178,94,0.25);
+  width:auto;
+  justify-self:start;
+  align-self:start;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  touch-action:manipulation;
 }
 
 .vb-button::after{
@@ -275,10 +286,16 @@ input:focus{
   display:none;
   margin-top:10px;
   padding:12px;
-  background:rgba(214,178,94,0.12);
-  border:1px solid rgba(214,178,94,0.35);
   border-radius:10px;
   color:#f7e7ba;
+  border:1px solid rgba(214,178,94,0.35);
+  background:rgba(214,178,94,0.12);
+}
+
+.vb-toast--error{
+  color:#ffd6d6;
+  border:1px solid rgba(214,178,94,0.35);
+  background:rgba(255, 90, 90, 0.08);
 }
 
 .vb-toast.show{
@@ -369,6 +386,8 @@ function checkForm() {
 }
 form.addEventListener("input", checkForm);
 form.addEventListener("change", checkForm);
+form.addEventListener("keyup", checkForm);
+form.addEventListener("blur", checkForm, true);
 checkForm();
 
 function triggerSubmitFlip(){
@@ -387,6 +406,13 @@ function setSubmitting(state){
     btnText.textContent = "Submit Attendance";
   }
   checkForm();
+}
+
+function showMessage(type, html){
+  successMsg.classList.remove("show", "vb-toast--error");
+  if (type === "error") successMsg.classList.add("vb-toast--error");
+  successMsg.innerHTML = html;
+  successMsg.classList.add("show");
 }
 
 function showPinError(){
@@ -421,7 +447,7 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  successMsg.classList.remove('show');
+  successMsg.classList.remove('show', 'vb-toast--error');
 
   triggerSubmitFlip();
   setSubmitting(true);
@@ -460,15 +486,23 @@ form.addEventListener('submit', async (e) => {
       .from('attendanceMeeting')
       .insert([dataToInsert]);
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      const msg = (insertError.message || "").toLowerCase();
+      if (msg.includes("duplicate") || msg.includes("unique")) {
+        showMessage("error",
+          "<strong>Already recorded.</strong> This student number has already submitted attendance. Thank you for being punctual.");
+        setSubmitting(false);
+        return;
+      }
+      throw insertError;
+    }
 
     const pick = studyCodes[Math.floor(Math.random() * studyCodes.length)];
-    successMsg.innerHTML = `
+    showMessage("success", `
       <strong>Thank you.</strong> Attendance received.
       <span class="vb-code">Study Code: ${pick.code}</span>
       <span class="vb-quote">${pick.message}</span>
-    `;
-    successMsg.classList.add('show');
+    `);
 
     form.reset();
     setSubmitting(false);
@@ -479,7 +513,7 @@ form.addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error(err);
-    alert('Error: ' + err.message);
+    showMessage("error", "Something went wrong while submitting. Please try again.");
     setSubmitting(false);
   }
 });
