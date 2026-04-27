@@ -240,10 +240,6 @@
       }
 
       .header-hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-        gap: clamp(24px, 4vw, 42px);
-        align-items: end;
         padding-top: clamp(30px, 5vw, 56px);
         position: relative;
         z-index: 1;
@@ -311,56 +307,6 @@
         background: rgba(255, 255, 255, 0.05);
       }
 
-      .hero-card {
-        padding: 24px;
-        border-radius: 26px;
-        background: linear-gradient(165deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-        backdrop-filter: blur(12px);
-      }
-
-      .hero-card-label {
-        margin: 0 0 8px;
-        color: rgba(245, 241, 232, 0.7);
-        font-size: 12px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .hero-card h3 {
-        margin: 0 0 18px;
-        font-family: "Cinzel", serif;
-        font-size: clamp(22px, 3vw, 30px);
-        line-height: 1.2;
-      }
-
-      .hero-card-list {
-        display: grid;
-        gap: 12px;
-      }
-
-      .hero-card-item {
-        padding: 14px 16px;
-        border-radius: 18px;
-        background: rgba(11, 11, 14, 0.34);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .hero-card-item span {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 700;
-        color: var(--gold-soft);
-      }
-
-      .hero-card-item small {
-        display: block;
-        color: rgba(245, 241, 232, 0.72);
-        font-size: 13px;
-        line-height: 1.5;
-      }
-
       main {
         flex: 1;
         width: min(1180px, 100%);
@@ -410,50 +356,6 @@
         object-fit: cover;
       }
 
-      .card-grid {
-        display: grid;
-        gap: 18px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      }
-
-      .info-card {
-        padding: 20px;
-        border-radius: 18px;
-        background: rgba(14, 14, 18, 0.8);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        position: relative;
-        overflow: hidden;
-        min-height: 140px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .info-card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 18px;
-        background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent);
-        opacity: 0.6;
-        pointer-events: none;
-      }
-
-      .info-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 32px rgba(0, 0, 0, 0.35);
-      }
-
-      .info-card h3 {
-        margin-top: 0;
-        font-size: 18px;
-        color: var(--gold-soft);
-      }
-
-      .info-card p {
-        margin: 0;
-        color: rgba(245, 241, 232, 0.75);
-        font-size: 14px;
-      }
-
       .updates {
         display: grid;
         gap: 16px;
@@ -472,9 +374,21 @@
 
       footer {
         text-align: center;
-        padding: 24px;
-        color: rgba(245, 241, 232, 0.55);
-        font-size: 13px;
+        padding: 32px 24px;
+        background: rgba(11, 11, 14, 0.8);
+        border-top: 1px solid rgba(212, 175, 55, 0.15);
+        color: rgba(245, 241, 232, 0.65);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .footer-brand {
+        font-family: "Cinzel", serif;
+        color: var(--gold-soft);
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
       }
 
       @keyframes pulse {
@@ -545,8 +459,6 @@
         }
 
         .header-hero {
-          grid-template-columns: 1fr;
-          align-items: start;
           padding-top: 28px;
         }
 
@@ -596,10 +508,6 @@
           padding: 28px 12px 48px;
         }
 
-        .card-grid {
-          grid-template-columns: 1fr;
-        }
-
         .carousel-window {
           border-radius: 18px;
         }
@@ -617,8 +525,7 @@
         .carousel-track,
         .tabs,
         .menu-toggle span,
-        .cta,
-        .info-card {
+        .cta {
           transition: none;
         }
 
@@ -672,32 +579,13 @@
               <p>
                 A good, easy-to-use space for keeping the house connected. Check in for
                 meetings, view the latest updates, and stay aligned with everything happening
-                at Villa Bravado.Some content may be unavailable due to the ongoing build up and maintanance of this site.
+                at Villa Bravado. Some content may be unavailable due to the ongoing build up and maintanance of this site.
               </p>
               <div class="hero-actions">
                 <a class="cta cta-primary" href="house.html">Open Attendance Register</a>
                 <a class="cta cta-secondary" href="#updates">View Updates</a>
               </div>
             </div>
-
-            <aside class="hero-card" aria-label="Quick access">
-              <p class="hero-card-label">Quick House Access</p>
-              <h3>Everything important in one stylish hub</h3>
-              <div class="hero-card-list">
-                <div class="hero-card-item">
-                  <span>Attendance</span>
-                  <small>Keep meeting check-ins easy and fast.</small>
-                </div>
-                <div class="hero-card-item">
-                  <span>Study Booking</span>
-                  <small>Book study log sessions without digging through pages.</small>
-                </div>
-                <div class="hero-card-item">
-                  <span>Bursaries</span>
-                  <small>Open funding opportunities from the main navigation.</small>
-                </div>
-              </div>
-            </aside>
           </section>
         </div>
       </header>
@@ -722,25 +610,6 @@
           </div>
         </section>
 
-        <section class="card-grid" id="community">
-          <article class="info-card">
-            <h3>House Pride</h3>
-            <p>Celebrate milestones, birthdays, and wins from the VB family.</p>
-          </article>
-          <article class="info-card">
-            <h3>Quick Notices</h3>
-            <p>Short reminders and highlights you can scan in seconds.</p>
-          </article>
-          <article class="info-card">
-            <h3>Upcoming Events</h3>
-            <p>Preview the next house events and key dates at a glance.</p>
-          </article>
-          <article class="info-card">
-            <h3>Support Zone</h3>
-            <p>Find who to contact for help, reporting, or coordination.</p>
-          </article>
-        </section>
-
         <section class="updates" id="updates">
           <div class="update-item">
             <strong>House Update:</strong> Attendance opens 30 minutes before each meeting.
@@ -755,9 +624,10 @@
       </main>
 
       <footer>
-        <p style="text-align:center; font-size:14px; color:#999; margin-top:20px;">
-          © 2026 • Built and maintained by
-          <span style="font-weight:600; color:#6366f1;">Francis Leo</span>
+        <span class="footer-brand">Villa Bravado Hub</span>
+        <p style="margin: 0;">
+          &copy; 2026 All Rights Reserved.<br>
+          Built and maintained by <span style="font-weight:600; color:var(--accent-sky);">Francis Leo</span>.
         </p>
       </footer>
     </div>
