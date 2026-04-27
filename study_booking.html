@@ -1,5 +1,4 @@
 <!DOCTYPE html> <html> <head> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>Study Booking</title>
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -7,7 +6,6 @@
   rel="stylesheet"
 />
 
-<!-- Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
@@ -339,11 +337,7 @@
 </head> <body> <div class="page"> <header> <div class="hero"> <div> <div class="eyebrow">Villa Bravado</div> <h1>Study Log Booking System</h1> <p class="subtitle"> Reserve your study slot in a premium, streamlined experience designed for focus and clarity. </p> <div class="notice">You may only book up to two hours under one name.</div> </div> <div class="hero-card"> <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80" alt="People studying together" /> <div class="caption">Focus • Collaboration • Progress</div> </div> </div> </header>
   <main>
     <div class="form-wrap">
-      <!-- =========================
-           BOOKING FORM
-      ========================== -->
       <form id="bookingForm">
-        <!-- Select which study log -->
         <div class="field">
           <label>Log Name</label>
           <select name="log_name" required>
@@ -353,19 +347,16 @@
           </select>
         </div>
 
-        <!-- Full name input -->
         <div class="field">
           <label>Full Name</label>
           <input type="text" name="full_name" required />
         </div>
 
-        <!-- Student number input -->
         <div class="field">
           <label>Student Number</label>
           <input type="text" name="student_number" required />
         </div>
 
-        <!-- Study start time -->
         <div class="field">
           <label>Study Start Time</label>
           <input type="datetime-local" name="study_start" required />
@@ -374,9 +365,7 @@
         <button type="submit">Book Slot</button>
       </form>
 
-      <!-- Message output -->
       <p id="message"></p>
-      <!-- LIVE BOOKINGS SECTION -->
       <div class="live-bookings">
         <h2>Live Bookings</h2>
         <ul id="bookingsList"></ul>
@@ -385,7 +374,6 @@
   </main>
 </div>
 
-<!-- Success Modal -->
 <div class="modal" id="successModal" aria-hidden="true">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="successTitle">
     <h3 id="successTitle">Booking Confirmed</h3>
@@ -466,11 +454,13 @@
   const form = document.getElementById("bookingForm");
   const studyStartInput = document.querySelector('input[name="study_start"]');
 
-  // Set minimum selectable time to NOW
+  // Set minimum selectable time to TOMORROW
   function updateMinTime() {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    studyStartInput.min = now.toISOString().slice(0, 16);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Sets the time to midnight of the next day
+    tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
+    studyStartInput.min = tomorrow.toISOString().slice(0, 16);
   }
 
   updateMinTime();
@@ -560,17 +550,12 @@
         return;
       }
 
-      const now = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0); // Sets validation to midnight of the next day
 
-      if (start < now) {
-        message.textContent = "❌ You cannot book a past time.";
-        return;
-      }
-
-      const minAllowedTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 min buffer
-
-      if (start < minAllowedTime) {
-        message.textContent = "❌ You must book at least 5 minutes in advance.";
+      if (start < tomorrow) {
+        message.textContent = "❌ Bookings must be made at least one day in advance.";
         return;
       }
 
@@ -691,4 +676,3 @@
   subscribeToBookings();
 </script>
 </body> </html>
-
