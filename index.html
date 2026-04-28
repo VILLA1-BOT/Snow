@@ -85,12 +85,24 @@
       }
       .brand h1 { font-family: "Cinzel", serif; font-size: clamp(20px, 3vw, 28px); margin: 0; }
 
-      /* NAVIGATION */
+      /* NAVIGATION - Solution 1 implemented */
       .tabs {
         display: flex; gap: 10px; padding: 8px; border-radius: 999px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(212, 175, 55, 0.28);
+        
+        /* New lines to allow smooth scrolling and prevent overlap */
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none; /* Hides scrollbar in Firefox */
+        -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
       }
+      
+      /* Hides scrollbar in Chrome/Safari/Edge */
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+
       .tabs a {
         text-decoration: none; color: var(--ink); padding: 10px 18px;
         border-radius: 999px; font-weight: 600; transition: 0.2s;
@@ -104,6 +116,34 @@
         cursor: pointer; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
       }
       .menu-toggle span { width: 22px; height: 2px; background: white; transition: 0.3s; }
+
+      /* Header Hero additions */
+      .hero-panel {
+        padding: 40px 0 20px;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .hero-chip {
+        background: rgba(212, 175, 55, 0.15);
+        color: var(--gold-soft);
+        padding: 6px 16px;
+        border-radius: 999px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+      }
+
+      .hero-panel h2 {
+        font-family: "Cinzel", serif;
+        font-size: clamp(28px, 5vw, 48px);
+        margin: 20px 0 15px;
+        background: linear-gradient(to right, #fff, var(--gold-soft));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
       /* MAIN CONTENT AREA */
       main {
@@ -132,7 +172,7 @@
 
       /* CAROUSEL */
       .carousel-window { border-radius: 22px; overflow: hidden; border: 1px solid var(--gold); }
-      .carousel-track { display: flex; transition: 0.8s ease; }
+      .carousel-track { display: flex; transition: 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
       .carousel-track img { flex: 0 0 100%; width: 100%; height: clamp(200px, 30vh, 400px); object-fit: cover; }
 
       .updates { display: grid; gap: 16px; }
@@ -200,7 +240,7 @@
               <a href="assistant.html">AI Assistant ✨</a>
               <a href="house.html">Attendance</a>
               <a href="study_booking.html">Study Log Booking</a>
-              <a href="maintenance.html">Maintenance</a>
+              <a href="https://forms.gle/64HTHF4aWZQnJat1A" target="_blank" rel="noopener noreferrer">Maintenance</a>
               <a href="https://exampapers.ufs.ac.za/Account/Login">Exam Papers</a>
               <a href="bursary.html">Bursaries</a>
             </nav>
@@ -231,7 +271,7 @@
         <section class="study-carousel">
           <div class="carousel-window">
             <div class="carousel-track">
-              <img src="https://lh5.googleusercontent.com/p/AF1QipPzJ-R0gTjQ1ANGw6bSpFjZrLgsX31dr4LyPy8u=w1080-k-no" alt="Students focused" />
+              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop" alt="Students focused" />
               <img src="https://media.licdn.com/dms/image/v2/D4D22AQGIC0cI-hsv6Q/feedshare-shrink_800/B4DZb0LtHjHEAg-/0/1747853436720?e=2147483647&v=beta&t=rdZiys5CMwxI2Je_s_bKTFdkzTg4tQv6EQFGyefvg2o" alt="Group study" />
               <img src="https://tse1.mm.bing.net/th/id/OIP.vxERemQ6GGVAe3jnTcdsDAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Studying" />
             </div>
