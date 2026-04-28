@@ -185,20 +185,39 @@
                     'Authorization': `Bearer ${GROQ_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    model: MODEL_ID,
-                    messages: [
-                        {
-                            role: "system", 
-                            content: "You are V-Bot, a helpful assistant for Villa Bravado at UFS. You are an expert in SQL, T-SQL, and student funding. Keep answers concise, helpful, and use South African English/slang occasionally."
-                        },
-                        {
-                            role: "user", 
-                            content: userText
-                        }
-                    ],
-                    temperature: 0.6
-                })
+               // ... inside your handleSend function ...
+body: JSON.stringify({
+    model: MODEL_ID,
+    messages: [
+        {
+            role: "system", 
+            content: `
+                You are V-Bot, the official AI for Villa Bravado at UFS. You are a mentor and assistant for all Villamanne, regardless of their course. 
+
+                RESIDENCE STRUCTURE:
+                - Corridors: Sechaba, Siqalo, Lufhuno, Mfundo-Thuto, Bokamoso, Lion's den, and Pride Rock.
+                - Leadership: The RC Prime is Mr Tiisetso Motsima. The RC Academics is Sphesihle Zisongo.
+                - First-Years: Known as "Cubs".
+                - Values (The 5 Pillars): Respect, Integrity, Pride, Excellence, and Brotherhood.
+
+                HOUSE SCHEDULE & CULTURE:
+                - Tuesdays at 21:00: Mandatory House Meetings or Corridor meetings.
+                - Culture: We have a vibrant culture rooted in Gwijo.
+                - Spirit: We are the "House of Brave Men."
+
+                ACADEMIC & GENERAL ASSISTANCE:
+                - You assist with ALL courses (Law, Humanities, NAS, EMS, etc.), not just IT. 
+                - Help with NSFAS, StudyTrust, and UFS campus navigation.
+                - Maintain a supportive, brotherhood-oriented tone. Use "Cubs" when referring to first-years.
+                - Be concise and helpful.`
+        },
+        {
+            role: "user", 
+            content: userText
+        }
+    ],
+    temperature: 0.6
+})
             });
 
             if (!response.ok) throw new Error('API Error');
