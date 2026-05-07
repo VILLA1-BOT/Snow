@@ -520,10 +520,9 @@
         </button>
       </div>
       
-      <h1>Study Concierge</h1>
+      <h1>Study Log Booking</h1>
       <p class="subtitle">
-        Reserve your log in a premium, streamlined environment designed for ultimate clarity. 
-        Focus. Collaborate. Progress.
+        Aweh villamanne 🖖 Secure your study log. Focus. Collaborate. Progress.
       </p>
       
       <button class="btn-primary" id="btnOpenBooking">Book New Slot</button>
@@ -950,8 +949,8 @@
 
         if (clashError) throw clashError;
 
-        if (clashes && clashes.length > 0) {
-          message.textContent = "❌ This time slot is already taken.";
+       if (clashes && clashes.length > 0) {
+          alert("❌ This time slot is already taken. Please choose a different time.");
           setSubmitting(false);
           return;
         }
