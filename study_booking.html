@@ -615,6 +615,13 @@
     </div>
   </div>
 
+  <div class="modal" id="alertModal">
+    <div class="modal-content" style="max-width: 350px; text-align: center; padding: 24px;">
+      <p id="alertMessageText" style="font-size: 16px; margin-bottom: 20px; color: #f5f1e8; font-weight: 500;"></p>
+      <button class="btn-submit" id="closeAlertBtn" style="padding: 10px; font-size: 14px;">OK</button>
+    </div>
+  </div>
+
   <audio id="ambientAudio" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
   </audio>
@@ -638,12 +645,21 @@
     const successModal = document.getElementById("successModal");
     const closeSuccessBtn = document.getElementById("closeSuccessBtn");
 
+    const alertModal = document.getElementById("alertModal");
+    const closeAlertBtn = document.getElementById("closeAlertBtn");
+    const alertMessageText = document.getElementById("alertMessageText");
+
     function openBooking() { bookingModal.classList.add("show"); }
     function closeBooking() { 
       bookingModal.classList.remove("show"); 
       document.getElementById("formMessage").textContent = "";
     }
     
+    function showCustomAlert(msg) {
+      alertMessageText.textContent = msg;
+      alertModal.classList.add("show");
+    }
+
     btnOpenBooking.addEventListener("click", openBooking);
     closeBookingBtn.addEventListener("click", closeBooking);
     
@@ -651,10 +667,15 @@
       successModal.classList.remove("show");
     });
 
+    closeAlertBtn.addEventListener("click", () => {
+      alertModal.classList.remove("show");
+    });
+
     // Close modals on outside click
     window.addEventListener("click", (e) => {
       if (e.target === bookingModal) closeBooking();
       if (e.target === successModal) successModal.classList.remove("show");
+      if (e.target === alertModal) alertModal.classList.remove("show");
     });
 
     // =========================
@@ -950,10 +971,10 @@
         if (clashError) throw clashError;
 
        if (clashes && clashes.length > 0) {
-          alert("❌ This time slot is already taken. Please choose a different time.");
-          setSubmitting(false);
-          return;
-        }
+         showCustomAlert("Aweh villamanne 🖖 That slot is already taken. Try another one.");
+         setSubmitting(false);
+         return;
+       }
 
         // 4. INSERT INTO SUPABASE
         const { error } = await supabaseClient.from("study_bookings").insert([dataToInsert]);
