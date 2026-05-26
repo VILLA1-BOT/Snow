@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Villa Bravado</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2f;
+      --line: rgba(196, 223, 255, 0.14);
+      --text: #eef6ff;
+      --muted: #91a9c4;
+      --cyan: #58d8ff;
+      --red: #ff5f6d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: radial-gradient(circle at 50% 12%, rgba(88, 216, 255, 0.15), transparent 30rem),
+                  linear-gradient(135deg, #07111f 0%, #0b1730 52%, #121a2b 100%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-panel {
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(13, 27, 47, 0.9);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .kicker {
+      color: var(--cyan);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 1.8rem;
+      line-height: 1.1;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      padding: 0 14px;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: rgba(88, 216, 255, 0.65);
+      box-shadow: 0 0 0 3px rgba(88, 216, 255, 0.12);
+    }
+
+    button {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1179a6, #23b39a);
+      box-shadow: 0 12px 28px rgba(35, 179, 154, 0.22);
+      color: var(--text);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 160ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-msg {
+      color: var(--red);
+      background: rgba(255, 95, 109, 0.1);
+      border: 1px solid rgba(255, 95, 109, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 16px;
+      display: none; /* Hidden by default */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-panel">
+    <p class="kicker">Manager Access</p>
+    <h1>Villa Bravado</h1>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="email" placeholder="manager@villabravado.com" />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" />
+      </div>
+
+      <button type="submit" id="submitBtn">Secure Login</button>
+      <div id="errorMsg" class="error-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    // 1. Paste your Supabase credentials here
+    const SUPABASE_URL = "PASTE_YOUR_SUPABASE_URL_HERE";
+    const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Stop the page from reloading
+
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      // Reset UI state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying...';
+      errorMsg.style.display = 'none';
+      errorMsg.textContent = '';
+
+      try {
+        // Attempt to log in with Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+
+        if (error) {
+          throw error; // Jump to the catch block if incorrect
+        }
+
+        // If successful, redirect to the Marathon page
+        submitBtn.textContent = 'Access Granted!';
+        window.location.href = 'Marathon.html';
+
+      } catch (error) {
+        // If it fails, show the error message and do not redirect
+        console.error("Login failed:", error.message);
+        errorMsg.textContent = "Incorrect email or password. Please try again.";
+        errorMsg.style.display = 'block';
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Secure Login';
+      }
+    });
+  </script>
+</body>
+</html>
