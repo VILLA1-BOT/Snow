@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Villa Bravado</title>
+  <style>
+    :root {
+      --bg: #05070b;
+      --panel: rgba(11, 18, 32, 0.9);
+      --blue: #2f80ff;
+      --blue-soft: #77b7ff;
+      --text: #f4f8ff;
+      --muted: #aab8cc;
+      --line: rgba(119, 183, 255, 0.26);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(47, 128, 255, 0.22), transparent 62%),
+        radial-gradient(720px 420px at 95% 5%, rgba(119, 183, 255, 0.14), transparent 58%),
+        linear-gradient(145deg, #05070b 0%, #0b1220 56%, #06080d 100%);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    main {
+      width: min(440px, 100%);
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03)), var(--panel);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.36);
+      text-align: center;
+    }
+
+    .mark {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--blue-soft), var(--blue));
+      font-size: 40px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 8vw, 38px);
+      line-height: 1.05;
+    }
+
+    p {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    a {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), #69a9ff);
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      box-shadow: 0 14px 34px rgba(47, 128, 255, 0.26);
+    }
+
+    a:active { transform: translateY(1px); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">&#129409;</div>
+    <h1>Villa Bravado</h1>
+    <p>Tap continue to open the student hub.</p>
+    <a id="continueLink" href="https://YOUR-NETLIFY-SITE.netlify.app">Continue</a>
+  </main>
+
+  <script>
+    const NETLIFY_SITE = "https://YOUR-NETLIFY-SITE.netlify.app";
+    document.getElementById("continueLink").href = NETLIFY_SITE;
+  </script>
+</body>
+</html>
